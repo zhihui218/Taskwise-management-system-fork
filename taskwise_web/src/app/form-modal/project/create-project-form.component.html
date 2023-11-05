@@ -1,0 +1,95 @@
+<!-- Create Project From -->
+<div class="card mb-5 mb-xl-10">
+    <div id="kt_account_profile_details" class="collapse show">
+        <form [formGroup]="projectForm" (ngSubmit)="isEditMode ? update() : createProject()" novalidate="" class="form">
+            <div class="card-body border-top p-9">
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Client</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <ng-container *ngIf="isLoadingUser$ | async">
+                            Loading...
+                        </ng-container>
+                        <ng-container *ngIf="!(isLoadingUser$ | async)">
+                            <p-dropdown formControlName="client_id" placeholder="Select Client" [options]="clients" optionLabel="name" optionValue="_id">
+                                <ng-template let-client pTemplate="option">
+                                    <div class="option-template">
+                                        <!-- Display the profile image -->
+                                        <img class="displayProfile" [src]="client.profile ? client.profile['profile_url'] : './assets/media/avatars/blank.png'" alt="Profile Image">
+                                        <!-- Display the client name -->
+                                        {{ client.name }}
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">Project Name</label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="name" type="text" class="form-control form-control-lg form-control-solid" placeholder="Enter Project Name" name="name" />
+                    </div>
+                </div>
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Project Type</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="type" [options]="type"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Due Date</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="due_date" type="date" class="form-control form-control-lg form-control-solid" placeholder="Due Date" name="due_date" />
+                    </div>
+                </div>
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Priority</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="priority" [options]="priority"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Status</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="status" [options]="status"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span
+                                class="required">Description</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <textarea formControlName="description" name="description" #messageInput class="form-control form-control-flush mb-3" rows="3" data-kt-element="input" placeholder="Type the description"></textarea>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="">Attachment</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <app-file-upload #fileService 
+                            [isEditMode]="true" 
+                            [uploadedFile]="project?.attachments" 
+                            (onFileSelected)="updateSelectedFiles($event)" 
+                            (onDeleteChosen)="deleteUploadedFiles($event)">
+                        </app-file-upload>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end align-items-center py-6 px-9">
+                <button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary" [disabled]="projectForm.invalid || (isLoadingPro$ | async)">
+                        <ng-container *ngIf="isLoadingPro$ | async">
+                            <span class="indicator-progress" [style.display]="'block'">
+                            Please wait...
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </ng-container>
+                        <ng-container *ngIf="(isLoadingPro$ | async) === false">
+                            <span class="indicator-label">{{ isEditMode ? "Done" : "Create Project" }}</span>
+                        </ng-container>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

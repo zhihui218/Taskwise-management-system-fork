@@ -1,0 +1,11 @@
+<div *ngIf="authService.isManager()" class="row gy-5 gx-xl-8">
+    <div class="col-12">
+        <app-user-table [role]="ROLE.ENGINEER"></app-user-table>
+    </div>
+    </div>
+
+    <div *ngIf="authService.isManager()" class="row gy-5 gx-xl-8">
+    <div class="col-12">
+        <app-user-table [role]="ROLE.CLIENT"></app-user-table>
+    </div>
+</div>

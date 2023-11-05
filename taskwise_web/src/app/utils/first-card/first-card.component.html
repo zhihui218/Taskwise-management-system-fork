@@ -1,0 +1,30 @@
+
+<p-skeleton *ngIf="!model" styleClass="px-6 py-8 rounded-2 mb-7 card position-relative"></p-skeleton>
+<div *ngIf="model" [ngClass]="model_type == TYPE.PROJECT ? 'bg-color-project' : model_type == TYPE.TASK ? 'bg-color-task' : 'bg-color-ticket'" class="px-6 py-8 rounded-2 mb-7 card position-relative">
+    <i [ngClass]="model_type == TYPE.PROJECT ? ['font-color-project', 'bi-briefcase-fill' ] : model_type == TYPE.TASK ? ['font-color-task', 'bi-stack'] : ['font-color-ticket', 'bi-ticket-fill']" class="bi mb-2" style="font-size: 2rem"></i>
+    <span [ngClass]="model_type == TYPE.PROJECT ? 'font-color-project' : model_type == TYPE.TASK ? 'font-color-task' : 'font-color-ticket'"  class="fw-bold fs-4">{{ model_type == TYPE.PROJECT ? 'Projects' : model_type == TYPE.TASK ? 'Tasks' : 'Tickets' }}</span> 
+    <div class="py-1">
+        <span class="text-dark fs-1 fw-bolder me-2">{{ model['Total'] }}</span>
+        <span class="fw-bold text-muted fs-7">Total</span>
+    </div>
+    <div class="d-flex flex-column position-absolute top-0 end-0 mt-2 me-2">
+        <span class="font-color-pending fw-bold">
+            <i class="bi bi-clock-history fs-6 font-color-pending fw-bold"></i>
+            <span class="me-2 ms-1 fs-6">:</span>
+            <span class="fs-6 fw-bolder me-2">{{ model[STATUS.PENDING] ? model[STATUS.PENDING] : 0 }}</span>
+            <span class="fs-9">Pending</span>  
+        </span>
+        <span class="font-color-onHold fw-bold">
+            <i [ngClass]="model_type == TYPE.PROJECT || model_type == TYPE.TASK ? 'bi-exclamation-circle' : 'bi-pause-circle'" class="bi fs-6 font-color-onHold fw-bold"></i>
+            <span class="me-2 ms-1 fs-6">:</span>
+            <span class="fs-6 fw-bolder me-2">{{ model[STATUS.ONHOLD] ? model[STATUS.ONHOLD] : model[TICKET_STATUS.REOPENED] ? model[TICKET_STATUS.REOPENED] : 0 }}</span>
+            <span class="fs-9">{{ model_type == TYPE.PROJECT || model_type == TYPE.TASK ? 'On Hold' : 'Reopened' }}</span>  
+        </span>
+        <span class="font-color-completed fw-bold">
+            <i class="bi bi-check-all fs-6 font-color-completed fw-bold"></i>
+            <span class="me-2 ms-1 fs-6">:</span>
+            <span class="fs-6 fw-bolder me-2">{{ model[STATUS.COMPLETED] ? model[STATUS.COMPLETED] : model[TICKET_STATUS.SOLVED] ? model[TICKET_STATUS.SOLVED] : 0 }}</span>
+            <span class="fs-9">{{ model_type == TYPE.PROJECT || model_type == TYPE.TASK ? 'Completed' : 'Solved' }}</span>  
+        </span>
+    </div>
+</div>

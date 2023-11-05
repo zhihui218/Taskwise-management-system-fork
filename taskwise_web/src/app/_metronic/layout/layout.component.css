@@ -1,0 +1,39 @@
+:host {
+  height: 100%;
+  margin: 0;
+}
+:host .flex-root {
+  height: 100%;
+}
+
+.page-loaded app-layout {
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.side-nav {
+  display: flex;
+  box-shadow: var(--bs-aside-box-shadow);
+  background-color: var(--bs-aside-bg-color);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 98;
+}
+
+.overlay-background {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 109;
+  background-color: var(--bs-drawer-overlay-bg-color);
+  animation: animation-drawer-fade-in 0.3s ease-in-out 1;
+}
+
+@media only screen and (min-width: 992px) {
+  .adjust-display-position {
+    padding-left: 100px;
+    transition: padding-left 0.5s linear;
+  }
+}/*# sourceMappingURL=layout.component.css.map */

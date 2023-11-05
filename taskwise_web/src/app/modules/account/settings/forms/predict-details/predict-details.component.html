@@ -1,0 +1,143 @@
+<div class="card mb-5 mb-xl-10">
+    <ng-container *ngIf="(user$ | async) as _user">
+        <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_profile_details" aria-expanded="true" aria-controls="kt_account_profile_details">
+            <div class="card-title m-0">
+                <h3 class="fw-bolder m-0">Other Information</h3>
+            </div>
+        </div>
+        <div id="kt_account_profile_details" class="collapse show">
+            <form [formGroup]="predictForm" (ngSubmit)="saveSettings(_user._id)" novalidate="" class="form">
+                <div class="card-body border-top p-9">
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">Age</label>
+                        <div class="col-lg-8 fv-row">
+                            <input min="0" formControlName="Age" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter your age" />
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Gender</span></label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="Gender" [options]="genders"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Education Background</span></label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="EducationBackground" [options]="educationBackground"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Marital Status</span></label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="MaritalStatus" [options]="maritalStatus"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6">
+                            <span class="required">Distance From Home</span>
+                            <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="Distance between your house and the company in KM"></i>
+                        </label>
+                        <div class="col-lg-8 fv-row">
+                            <div class="d-flex align-items-center">
+                                <input style="width: 95%" min="0" formControlName="DistanceFromHome" type="number" class="form-control form-control-lg form-control-solid" placeholder="Distance"/>
+                                <span style="width: 5%" class="ms-2 fw-bolder fs-8">KM</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Education Level</span></label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="EmpEducationLevel" [options]="educationLevel"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Environment Satisfaction</span></label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="EmpEnvironmentSatisfaction" [options]="environmentSatisfaction"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Job Satisfaction</span></label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="EmpJobSatisfaction" [options]="jobSatisfaction"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">Number of Companies Worked</label>
+                        <div class="col-lg-8 fv-row">
+                            <input min="0" formControlName="NumCompaniesWorked" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">
+                            Overtime
+                            <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="Are you willing to work overtime when necessary?"></i>
+                        </label>
+                        <div class="col-lg-8 fv-row">
+                            <p-selectButton [options]="isOvertime" formControlName="OverTime"></p-selectButton>                        
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6">
+                            <span class="required">Relationship Satisfaction</span>
+                            <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="How would you rate your current relationship with your colleagues?"></i>
+                        </label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="EmpRelationshipSatisfaction" [options]="relationshipSatisfaction"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">
+                            Working Experience
+                            <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="State your total working experiences in years"></i>
+                        </label>
+                        <div class="col-lg-8 fv-row">
+                            <input min="0" formControlName="TotalWorkExperienceInYears" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label fw-bold fs-6">
+                            <span class="required">Worklife Balance</span>
+                            <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="How would you rate your current work-life balance?"></i>
+                        </label>
+                        <div class="col-lg-8 fv-row">
+                            <p-dropdown formControlName="EmpWorkLifeBalance" [options]="worklifeBalance"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">Experience Years In This Company</label>
+                        <div class="col-lg-8 fv-row">
+                            <input readonly type="number" class="form-control form-control-lg form-control-solid" value="{{ DateFormatter.calculateYearOfExperience(_user.joining_date) }}" />
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">Experience Years In Current Role</label>
+                        <div class="col-lg-8 fv-row">
+                            <input min="0" formControlName="ExperienceYearsInCurrentRole" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <label class="col-lg-4 col-form-label required fw-bold fs-6">
+                            Attrition
+                            <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="Are you currently considering leaving your position with the company?"></i>
+                        </label>
+                        <div class="col-lg-8 fv-row">
+                            <p-selectButton [options]="isAttrition" formControlName="Attrition"></p-selectButton>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end py-6 px-9">
+                    <button type="submit" class="btn btn-primary" [disabled]="(isLoading$ | async) || predictForm.invalid">
+                      <ng-container *ngIf="!isLoading">Save</ng-container>
+                      <ng-container *ngIf="isLoading">
+                        <span class="indicator-progress" [style.display]="'block'">
+                            Saving...{{ " " }}
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                        </ng-container>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </ng-container>
+</div>

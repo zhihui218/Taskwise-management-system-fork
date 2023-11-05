@@ -1,0 +1,203 @@
+<!-- Project Details -->
+
+<div class="card mb-5 mb-xl-10 position-relative" id="kt_profile_details_view">
+  <div *ngIf="isDeleting" class="loading-page">
+    <div class="loader"></div>
+  </div>
+    <div class="card-header cursor-pointer">
+        <div class="card-title m-0">
+            <h3 class="fw-bolder m-0">
+                {{ isEditMode ? "Update Project" : "Project Details" }}
+            </h3>
+        </div>
+
+        <div *ngIf="authService.isManager()" class="d-flex align-items-center">
+            <button (click)="toggleEditMode()" class="btn btn-primary align-self-center me-3">
+              {{ isEditMode ? "Close" : "Edit" }}
+            </button>
+            <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+            <button (click)="openConfirmationDialog()" class="btn btn-danger align-self-center me-3">
+              Delete
+          </button>
+        </div>
+    </div>
+
+    <div class="card-body p-9">
+        <ng-container *ngIf="isEditMode">
+            <app-create-project-form 
+              [isEditMode]="isEditMode" 
+              [project]="project" 
+              (updateProject)="updateProject($event)">
+          </app-create-project-form>
+        </ng-container>
+
+        <ng-container *ngIf="!isEditMode">
+          <!-- Pie Chart Section -->
+          <div *ngIf="project?.task_progress?.totalCounts || project?.ticket_progress?.totalCounts" class="row mb-7">
+            <!-- Task Progress Pie Chart -->
+            <div *ngIf="project?.task_progress?.totalCounts" class="chart_display" [ngClass]="project?.ticket_progress?.totalCounts? 'col-md-6' : 'col-12'">
+              <canvas #task_chart id="taskProgress"></canvas>    
+            </div>
+            <!-- Ticket Progress Pie Chart -->
+            <div *ngIf="project?.ticket_progress?.totalCounts" class="chart_display" [ngClass]="project?.task_progress?.totalCounts? 'col-md-6' : 'col-12'">
+              <canvas #ticket_chart id="ticketProgress"></canvas>
+            </div>
+          </div> 
+
+            <div *ngIf="!authService.isClient()" class="row mb-7">
+              <label class="col-lg-2 fw-bold text-muted">Client:</label>
+
+              <div class="col-lg-10">
+                <ng-container *ngIf="isLoadingUser$ | async">
+                  Loading...
+                </ng-container>
+                <ng-container *ngIf="!(isLoadingUser$ | async)">
+                  <p-chip label="{{ selectedClient?.name }}" image="{{ selectedClient?.profile ? selectedClient?.profile['profile_url'] : './assets/media/avatars/blank.png'}}"></p-chip>
+                </ng-container>
+              </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Project Name:</label>
+
+                <div class="col-lg-10">
+                  <ng-container *ngIf="isLoadingPro$ | async">
+                    Loading...
+                  </ng-container>
+                  <ng-container *ngIf="!(isLoadingPro$ | async)">
+                    <span class="fw-bolder fs-6 text-dark">{{ project?.name }}</span>
+                  </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+              <label class="col-lg-2 fw-bold text-muted">Project Type:</label>
+
+              <div class="col-lg-10">
+                <ng-container *ngIf="isLoadingPro$ | async">
+                  Loading...
+                </ng-container>
+                <ng-container *ngIf="!(isLoadingPro$ | async)">
+                  <span class="fw-bolder fs-6 text-dark">{{ project?.type }}</span>
+                </ng-container>
+              </div>
+          </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Due Date:</label>
+
+                <div class="col-lg-10">
+                  <ng-container *ngIf="isLoadingPro$ | async">
+                    Loading...
+                  </ng-container>
+                  <ng-container *ngIf="!(isLoadingPro$ | async)">
+                    <span class="fw-bolder fs-6 text-dark">{{ project?.due_date | date:'MMMM d, yyyy' }}</span>
+                  </ng-container>
+                </div>
+            </div>
+
+            <ng-container *ngIf="!(isLoadingPro$ | async)">
+              <div *ngIf="project?.completed_date" class="row mb-7">
+                  <label class="col-lg-2 fw-bold text-muted">Completed By:</label>
+  
+                  <div class="col-lg-10">
+                      <ng-container *ngIf="!(isLoadingPro$ | async)">
+                          <span class="fw-bolder fs-6 text-dark">{{ project?.completed_date | date:'MMMM d, yyyy' }}</span>
+                      </ng-container>
+                  </div>
+              </div>
+          </ng-container>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Priority:</label>
+                <div class="col-lg-10">
+                  <ng-container *ngIf="isLoadingPro$ | async">
+                    Loading...
+                  </ng-container>
+                  <ng-container *ngIf="!(isLoadingPro$ | async)">
+                    <span 
+                    [ngClass]="project?.priority == 'Low' ? 'low-font-color' : project?.priority == 'Medium' ? 'medium-font-color' : 'high-font-color' "
+                    class="fw-bolder fs-6 text-dark">{{ project?.priority }}</span>
+                  </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Status:</label>
+
+                <div class="col-lg-10">
+                  <ng-container *ngIf="isLoadingPro$ | async">
+                    Loading...
+                  </ng-container>
+                  <ng-container *ngIf="!(isLoadingPro$ | async)">
+                    
+                    <p-chip
+                    [styleClass]="project?.status == 'Completed' ? 'completed-style' : project?.status == 'Pending' ? 'pending-style' : 'onHold-style'"
+                    [label]="project?.status"></p-chip>
+
+                    <!-- <span class="fw-bolder fs-6 text-dark">{{ project?.status }}</span> -->
+                  </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Team Member:</label>
+
+                <div class="col-lg-10">
+                  <ng-container *ngIf="isLoadingPro$ | async">
+                    Loading...
+                  </ng-container>
+                  <ng-container *ngIf="!(isLoadingPro$ | async)">
+                    <span class="fw-bold fst-italic" *ngIf="project?.selectedEngineer?.length == 0">No members are chosen</span>
+                    <p-chip class="me-2" *ngFor="let engineer of project.selectedEngineer" label="{{engineer.name}}" image="{{ engineer.profile ? engineer.profile['profile_url'] : './assets/media/avatars/blank.png'}}"></p-chip>
+                  </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Description:</label>
+
+                <div class="col-lg-10">
+                  <ng-container *ngIf="isLoadingPro$ | async">
+                    Loading...
+                  </ng-container>
+                  <ng-container *ngIf="!(isLoadingPro$ | async)">
+                    <textarea readOnly class="form-control form-control-flush mb-3" rows="3" data-kt-element="input" [value]="project?.description"></textarea>
+                  </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Attachment:</label>
+
+                <div class="col-lg-10">
+                  <ng-container *ngIf="isLoadingPro$ | async">
+                    Loading...
+                  </ng-container>
+                  <ng-container *ngIf="!(isLoadingPro$ | async)">
+                     <span class="fw-bold fst-italic" *ngIf="project?.attachments?.length == 0">No file is uploaded</span>
+                      <app-file-upload *ngIf="project?.attachments?.length > 0"
+                        #fileService 
+                        [isEditMode]="false"
+                        [uploadedFile]="project?.attachments">
+                      </app-file-upload>
+                  </ng-container>
+                </div>
+            </div>
+        </ng-container>
+
+        <div class="footer-btn card-footer d-flex justify-content-end py-6 px-9">
+            <button type="button" class="btn btn-light btn-active-light-primary me-2" (click)="goBack()">
+                Back
+            </button>
+            <button *ngIf="!authService.isEngineer()" type="button" (click)="displayTaskList()" class="btn btn-success me-2">
+              See All Tasks
+            </button>
+            <button *ngIf="!authService.isEngineer()" type="button" (click)="displayTicketList()" class="btn btn-success">
+              See All Tickets
+            </button>
+        </div>
+
+<ng-template #chartSection>
+
+</ng-template>

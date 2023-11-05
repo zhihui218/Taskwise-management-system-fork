@@ -1,0 +1,70 @@
+<div [ngClass]="!task_id ? 'mb-7' : ''" class="rounded-2 card col-12">
+    <div *ngIf="!isNavigatingFromProject() && !task_id" class="card-header border-0">
+        <div class="card-title m-0">
+            <span class="fs-4 fw-bold text-gray-600 m-0">All Tickets</span>
+        </div>
+    </div>
+    <div [ngClass]="!isNavigatingFromProject() && !task_id ? 'pt-0' : 'pt-3'" class="card-body">
+        <p-skeleton *ngIf="isLoading" styleClass="px-6 py-8 rounded-2 mb-7 card position-relative"></p-skeleton>
+        <p-table *ngIf="!isLoading" [value]="paginateTicket" [scrollable]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="name" pFrozenColumn>Name <p-sortIcon field="name"></p-sortIcon></th>
+                    <th pSortableColumn="created_date">Created Date <p-sortIcon field="created_date"></p-sortIcon></th>
+                    <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                    <th pSortableColumn="priority">Priority <p-sortIcon field="priority"></p-sortIcon></th>
+                    <th pSortableColumn="due_date">Deadline <p-sortIcon field="due_date"></p-sortIcon></th>
+                    <th>Assignee</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-ticket>
+                <tr class="cursor-pointer" (click)="displayDetails(ticket)">
+                    <td style="min-width: 150px;" pFrozenColumn>
+                        {{ ticket.name }}
+                        <span class="fw-bold low-font-color" *ngIf="ticket.status == TICKET_STATUS.SOLVED">
+                            <br />
+                            <i class="fw-bold low-font-color bi bi-check-circle"></i> {{ TICKET_STATUS.SOLVED }} : {{ ticket.completed_date | date:'d MMMM yyyy' }}
+                        </span>
+                    </td>
+                    <td style="min-width: 120px;">{{ ticket.created_date | date:'d MMMM yyyy' }}</td>
+                    <td style="min-width: 100px;">
+                        <p-chip
+                        [styleClass]="ticket?.status == TICKET_STATUS.SOLVED ? 'completed-style' : ticket?.status == TICKET_STATUS.PENDING ? 'pending-style' : 'onHold-style'"
+                        [label]="ticket?.status"></p-chip>   
+                    </td>
+                    <td style="min-width: 100px;">
+                        <span 
+                        [ngClass]="ticket?.priority == PRIORITY.LOW ? 'low-font-color' : ticket?.priority == PRIORITY.MEDIUM ? 'medium-font-color' : 'high-font-color' "
+                        class="fw-bolder fs-6 text-dark">{{ ticket?.priority }}</span>
+                    </td>
+                    <td style="min-width: 120px;">
+                        {{ ticket?.due_date ? (ticket.due_date | date:'d MMMM yyyy') : 'N/A' }}
+                        <span class="fw-bold high-font-color" *ngIf="ticket?.due_date && ticket.status != TICKET_STATUS.SOLVED && dateFormatter.isOverdue(ticket.due_date)">
+                            <br/>
+                            <i class="fw-bold high-font-color bi bi-alarm"></i> Overdue : {{ dateFormatter.countOverdueDays(ticket.due_date) }} day(s)
+                        </span>
+
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center mb-3">
+                            <!-- <span class="pi pi-users main-color" style="font-size: 1.5rem"></span>
+                            <span class="main-color ms-2 me-3">:</span> -->
+                            <p-avatar image="{{ ticket.selectedLeader?.profile ? ticket.selectedLeader?.profile['profile_url'] : './assets/media/avatars/blank.png'}}" size="large" shape="circle"></p-avatar>
+                        </div>
+                        <!-- For "CLIENT" view -->
+                        <!-- <div *ngIf="!task_id" class="d-flex flex-row align-items-center">
+                            <p-avatarGroup *ngIf="ticket.engineers.length > 0" styleClass="mb-3">
+                                <p-avatar *ngFor="let engineer of ticket.engineers.slice(0, 3)" image="{{ engineer.profile ? engineer.profile['profile_url'] : './assets/media/avatars/blank.png'}}" size="large" shape="circle"></p-avatar>
+                                <p-avatar *ngIf="ticket.engineers.length > 3" label="+{{ ticket.selectedEngineers.length - 3 }}" shape="circle" size="large" [style]="{ 'background-color': 'var(--bs-primary)', color: '#ffffff' }"></p-avatar>
+                            </p-avatarGroup>
+                            <span *ngIf="ticket.engineers.length == 0">No members selected</span>
+                        </div> -->
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <ng-container *ngIf="pagination">
+        <p-paginator (onPageChange)="onPageChange($event)" [showCurrentPageReport]="true" [rows]="limit" [totalRecords]="pagination.numOfDocs" [rowsPerPageOptions]="rowPerPageOptions"></p-paginator>
+    </ng-container>
+</div>

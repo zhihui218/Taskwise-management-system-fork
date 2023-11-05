@@ -1,0 +1,35 @@
+.card{
+    min-width: 250px;
+}
+
+.card-header{
+    background-color: var(--bs-warning-light);
+}
+
+.card-header{
+    padding: 0 1rem;
+}
+
+.card-body{ 
+    padding: 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+.unread_chat{
+    border-bottom: 1px solid var(--bs-text-muted);
+    padding: 1rem 1rem;
+}
+
+.sync-btn{
+    border-color: transparent;
+    width: 50px;
+}
+
+// .unread_chat:hover{
+//     background-color: #f5f9ff;
+// }
+
+.load-more-btn:hover{
+    background-color: #f5f9ff;
+}

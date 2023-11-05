@@ -1,0 +1,13 @@
+:host::ng-deep .p-dialog .p-dialog-footer {
+  padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+}
+
+@media only screen and (max-width: 425px) {
+  .footer-btn {
+    flex-direction: column;
+  }
+  .footer-btn button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}/*# sourceMappingURL=project-detail.component.css.map */

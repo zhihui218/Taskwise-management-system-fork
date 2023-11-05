@@ -1,0 +1,55 @@
+<div class="hover-scroll-y mb-10" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}"
+  data-kt-scroll-height="auto" data-kt-scroll-wrappers="#kt_aside_nav"
+  data-kt-scroll-dependencies="#kt_aside_logo, #kt_aside_footer" data-kt-scroll-offset="0px">
+  <ul class="nav flex-column" id="kt_aside_nav_tabs">
+    <!-- <li *ngFor="let tab of allTabs" class="nav-item mb-3" [title]="tab.tooltip" [ngbTooltip]="tab.tooltip"
+      placement="end">
+      <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light"
+        (click)="setActiveTab(tab.link)" [ngClass]="{'active': tab.link === activeTab.link}">
+        <span [inlineSVG]="tab.icon" class="svg-icon svg-icon-2"></span>
+      </a>
+    </li> -->
+    <li *ngIf="!isDesktop" class="nav-item mb-3">
+      <a pTooltip="Close" tooltipPosition="right" class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light"
+      (click)="closeMenu()">
+        <i class=" bi bi-arrow-left-circle-fill" style="font-size: 1.5rem"></i>
+      </a>
+      <hr/>
+    </li>
+    <li *ngFor="let tab of allTabs" class="nav-item mb-3">
+        <a routerLinkActive="active" [routerLink]="tab.routerLink" [pTooltip]="tab.tooltip" tooltipPosition="right" class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light">
+          <i [ngClass]="tab.icon" class="bi" style="font-size: 1.5rem"></i>
+        </a>
+    </li>
+    <!-- <li class="nav-item mb-3">
+      <a class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light">
+        <i class="pi pi-arrow-left" style="font-size: 1.5rem"></i>
+      </a>
+    </li> -->
+    <!-- <li class="nav-item mb-3">
+      <a pTooltip="Projects" tooltipPosition="right" class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light">
+        <i class="bi bi-briefcase-fill" style="font-size: 1.5rem"></i>
+      </a>
+    </li>
+    <li class="nav-item mb-3">
+      <a pTooltip="Tasks" tooltipPosition="right" class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light">
+        <i class="bi bi-stack" style="font-size: 1.5rem"></i>
+      </a>
+    </li>
+    <li class="nav-item mb-3">
+      <a pTooltip="Tickets" tooltipPosition="right" class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light">
+        <i class="bi bi-ticket-fill" style="font-size: 1.5rem"></i>
+      </a>
+    </li>
+    <li class="nav-item mb-3">
+      <a  pTooltip="Engineers" tooltipPosition="right" class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light">
+        <i class="bi bi-people-fill" style="font-size: 1.5rem"></i>
+      </a>
+    </li>
+    <li class="nav-item mb-3">
+      <a pTooltip="Clients" tooltipPosition="right" class="nav-link btn btn-icon btn-active-color-primary btn-color-gray-400 btn-active-light">
+        <i class="bi bi-person-circle" style="font-size: 1.5rem"></i>
+      </a>
+    </li> -->
+  </ul>
+</div>

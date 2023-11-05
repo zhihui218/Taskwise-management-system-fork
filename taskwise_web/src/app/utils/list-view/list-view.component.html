@@ -1,0 +1,109 @@
+<!-- Task Section -->
+<div *ngIf="missionType == 'TASK'" class="row">
+    <div class="col-md-12">
+        <ng-container *ngIf="_activeTab.label != 'Overdue' && _activeTab.label != 'Completed'">
+            <!-- "TODAY" MISSION -->
+            <div class="text-muted d-block fw-bold">Today</div>
+            <ng-container *ngTemplateOutlet="taskTemplate; context: { $implicit: todayMission, mode: 'Active Task'}"> </ng-container>
+            
+            <!-- "THIS WEEK" MISSION -->
+            <div class="text-muted d-block fw-bold">This Week</div>
+            <ng-container *ngTemplateOutlet="taskTemplate; context: { $implicit: weeklyMission, mode: 'Active Task'}"></ng-container>
+            
+            <!-- "THIS MONTH" MISSION -->
+            <div class="text-muted d-block fw-bold">This Month</div>
+            <ng-container *ngTemplateOutlet="taskTemplate; context: { $implicit: monthlyMission, mode: 'Active Task'}"></ng-container>
+        </ng-container>
+        
+        <!-- "OVERDUE" MISSION -->
+        <ng-container *ngIf="_activeTab.label == 'Overdue'">
+            <ng-container *ngTemplateOutlet="taskTemplate; context: { $implicit: overdueMission, mode: 'Overdue'}"></ng-container>
+        </ng-container>
+        
+        <!-- "COMPLETED" MISSION -->
+        <ng-container *ngIf="_activeTab.label == 'Completed'">
+            <ng-container *ngTemplateOutlet="taskTemplate; context: { $implicit: completedMission, mode: 'Completed'}"></ng-container>
+        </ng-container>
+    </div>
+</div>
+<!-- Ticket Section -->
+<div *ngIf="missionType == 'TICKET'" class="row">
+    <!-- Pending Ticket -->
+    <ng-container *ngIf="_activeTab.label == TICKET_STATUS.PENDING">
+        <ng-container *ngTemplateOutlet="ticketTemplate; context: { $implicit: pendingTicket, mode: TICKET_STATUS.PENDING}"></ng-container>
+    </ng-container>
+
+    <!-- Reopened Ticket -->
+    <ng-container *ngIf="_activeTab.label == TICKET_STATUS.REOPENED">
+        <ng-container *ngTemplateOutlet="ticketTemplate; context: { $implicit: reopenedTicket, mode: TICKET_STATUS.REOPENED }"></ng-container>
+    </ng-container>
+
+    <!-- Solved Ticket -->
+    <ng-container *ngIf="_activeTab.label == TICKET_STATUS.SOLVED">
+        <ng-container *ngTemplateOutlet="ticketTemplate; context: { $implicit: solvedTicket, mode: TICKET_STATUS.SOLVED }"></ng-container>
+    </ng-container>
+</div>
+
+<!-- Reusable template for "Ticket" list -->
+<ng-template #ticketTemplate let-tickets let-mode="mode">
+    <ul class="list list-inline">
+        <li (click)="navigate(ticket._id)" *ngFor="let ticket of tickets" class="d-flex justify-content-between">
+            <div class="d-flex flex-row align-items-center">
+                <div class="ml-2">
+                    <div class="d-flex align-items-center">
+                        <div class="symbol symbol-45px symbol-circle mb-5 me-2">
+                            <img [src]="ticket.client.profile ? ticket.client.profile['profile_url'] : './assets/media/avatars/blank.png'" alt="" />
+                        </div>
+                        <span>{{ ticket.client.name }}</span>
+                    </div>
+                    <h6 class="mb-0 text-gray-800 text-hover-primary fw-bolder fs-6">{{ ticket.name }}</h6>
+                    <div class="d-flex flex-row mt-1 text-black-50 date-time">
+                        {{ ticket.description }}
+                    </div>
+                    <div class="d-flex flex-row align-items-center mt-1 date-time">
+                        <ng-container *ngIf="ticket?.due_date">
+                            <i class="pi pi-calendar me-2"></i>
+                            <div class="me-4 me-sm-5">{{ ticket.due_date | date:'MMMM d, yyyy' }}</div>
+                            <p-chip *ngIf="(mode == TICKET_STATUS.REOPENED || mode == TICKET_STATUS.PENDING) && isOverdue(ticket.due_date)" styleClass="overdue-style" label="{{ countOverdueDays(ticket.due_date) }} days"></p-chip>    
+                        </ng-container>
+                        <p-chip *ngIf="mode == TICKET_STATUS.SOLVED" styleClass="completed-style" label="Solved"></p-chip>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!isMobile" class="d-flex flex-row align-items-center">
+                <p-avatarGroup *ngIf="ticket.engineers && ticket.engineers.length == ticket.selectedEngineersID.length" styleClass="mb-3">
+                    <p-avatar *ngFor="let engineer of ticket.engineers.slice(0, 3)" image="{{ engineer.profile ? engineer.profile['profile_url'] : './assets/media/avatars/blank.png'}}" size="large" shape="circle"></p-avatar>
+                    <p-avatar *ngIf="ticket.engineers.length > 3" label="+{{ ticket.engineers.length - 3 }}" shape="circle" size="large" [style]="{ 'background-color': 'var(--bs-primary)', color: '#ffffff' }"></p-avatar>
+                </p-avatarGroup>
+            </div>
+        </li>
+    </ul>
+</ng-template>
+
+<!-- Reusable template for "Task" list -->
+<ng-template #taskTemplate let-tasks let-mode="mode">
+    <ul class="list list-inline">
+        <li (click)="navigate(task._id)" *ngFor="let task of tasks" class="d-flex justify-content-between">
+            <div class="d-flex flex-row align-items-center">
+                <div class="ml-2">
+                    <h6 class="mb-0 text-gray-800 text-hover-primary fw-bolder fs-6">{{ task.name }}</h6>
+                    <div class="d-flex flex-row mt-1 text-black-50 date-time">
+                        {{ task.description }}
+                    </div>
+                    <div class="d-flex flex-row align-items-center mt-1 date-time">
+                        <i class="pi pi-calendar me-2"></i>
+                        <div class="me-4 me-sm-5">{{ task.due_date | date:'MMMM d, yyyy' }}</div>
+                        <p-chip *ngIf="mode == 'Overdue'" styleClass="overdue-style" label="{{ countOverdueDays(task.due_date) }} days"></p-chip>
+                        <p-chip *ngIf="mode == 'Completed'" styleClass="completed-style" label="Completed"></p-chip>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!isMobile" class="d-flex flex-row align-items-center">
+                <p-avatarGroup *ngIf="task.engineers" styleClass="mb-3">
+                    <p-avatar *ngFor="let engineer of task.engineers.slice(0, 3)" image="{{ engineer.profile ? engineer.profile['profile_url'] : './assets/media/avatars/blank.png'}}" size="large" shape="circle"></p-avatar>
+                    <p-avatar *ngIf="task.engineers.length > 3" label="+{{ task.engineers.length - 3 }}" shape="circle" size="large" [style]="{ 'background-color': 'var(--bs-primary)', color: '#ffffff' }"></p-avatar>
+                </p-avatarGroup>
+            </div>
+        </li>
+    </ul>
+</ng-template>

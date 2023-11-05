@@ -1,0 +1,1 @@
+{"version":3,"sources":["task-detail.component.scss","task-detail.component.css"],"names":[],"mappings":"AACI;EACI,oCAAA;ACAR;ADGI;EACI,sBAAA;ACDR;;ADKA;EAAkB,aAAA;ACDlB;;ADGA;EACI;IACI,sBAAA;ECAN;EDGE;IACI,WAAA;IACA,mBAAA;ECDN;AACF;ADIA;EACI;IACI,aAAA;ECFN;AACF","file":"task-detail.component.css"}

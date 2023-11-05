@@ -1,0 +1,37 @@
+<div class="rounded-2 mb-7 card col-12">
+    <div class="card-header border-0">
+        <div class="card-title m-0">
+            <span class="fs-4 fw-bold text-gray-600 m-0">All {{ role == ROLE.CLIENT ? 'Clients' : 'Engineers' }}</span>
+        </div>
+    </div>
+    <div class="card-body pt-0">
+        <p-skeleton *ngIf="isLoading" styleClass="px-6 py-8 rounded-2 mb-7 card position-relative"></p-skeleton>
+        <p-table *ngIf="!isLoading" [value]="paginateUser">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Profile</th>
+                    <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th *ngIf="role == ROLE.CLIENT" pSortableColumn="joining_date">Company<p-sortIcon field="created_date"></p-sortIcon></th>
+                    <th *ngIf="!(role == ROLE.CLIENT)" pSortableColumn="joining_date">Joining Date <p-sortIcon field="created_date"></p-sortIcon></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-user>
+                <tr class="cursor-pointer" (click)="displayDetails(user)">
+                    <td>
+                        <p-avatar image="{{ user.profile ? user.profile['profile_url'] : './assets/media/avatars/blank.png'}}" size="large" shape="circle"></p-avatar>
+                    </td>
+                    <td style="min-width: 150px;">{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone ? user.phone : 'N/A' }}</td>
+                    <td style="min-width: 150px;" *ngIf="!(role == ROLE.CLIENT)">{{ user.joining_date | date:'d MMMM yyyy' }}</td>
+                    <td style="min-width: 150px;" *ngIf="role == ROLE.CLIENT">{{ user.company_name ? user.company_name : '-' }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <ng-container *ngIf="pagination">
+        <p-paginator (onPageChange)="onPageChange($event)" [showCurrentPageReport]="true" [rows]="10" [totalRecords]="pagination.numOfDocs" [rowsPerPageOptions]="[10, 15, 20]"></p-paginator>
+    </ng-container>
+</div>

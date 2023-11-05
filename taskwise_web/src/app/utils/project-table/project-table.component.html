@@ -1,0 +1,80 @@
+<div class="rounded-2 mb-7 card col-12">
+    <div class="card-header border-0">
+        <div class="card-title m-0">
+            <span class="fs-4 fw-bold text-gray-600 m-0">{{ role == ROLE.CLIENT ? '' : 'All' }} Projects</span>
+        </div>
+    </div>
+    <div class="card-body pt-0">
+        <p-skeleton *ngIf="isLoading" styleClass="px-6 py-8 rounded-2 mb-7 card position-relative"></p-skeleton>
+        <p-table *ngIf="!isLoading" [value]="paginateProject" [scrollable]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="name" pFrozenColumn>Name <p-sortIcon field="name"></p-sortIcon></th>
+                    <th pSortableColumn="due_date">Deadline <p-sortIcon field="due_date"></p-sortIcon></th>
+                    <th>Task Progress</th>
+                    <th>Ticket Progress</th>
+                    <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                    <th pSortableColumn="priority">Priority <p-sortIcon field="priority"></p-sortIcon></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-project>
+                <tr class="cursor-pointer" (click)="displayDetails(project)">
+                    <td style="min-width: 150px;" pFrozenColumn>
+                        {{ project.name }}
+                        <span class="fw-bold low-font-color" *ngIf="project.status == STATUS.COMPLETED">
+                            <br />
+                            <i class="fw-bold low-font-color bi bi-check-circle"></i> {{ STATUS.COMPLETED }} : {{ project.completed_date | date:'d MMMM yyyy' }}
+                        </span>
+                    </td>
+                    <td style="min-width: 120px;">
+                        {{ project.due_date | date:'d MMMM yyyy' }}
+                        <span class="fw-bold high-font-color" *ngIf="project.status != STATUS.COMPLETED && dateFormatter.isOverdue(project.due_date)">
+                            <br/>
+                            <i class="fw-bold high-font-color bi bi-alarm"></i> Overdue : {{ dateFormatter.countOverdueDays(project.due_date) }} day(s)
+                        </span>
+                    </td>
+                    <td style="min-width: 150px;">
+                        <ng-container *ngIf="project?.hasTask">
+                            <p-progressBar [value]="project?.task_completed_percent ? project?.task_completed_percent : '0%'"></p-progressBar>
+                        </ng-container>
+                        <ng-container *ngIf="!project?.hasTask">
+                            No Task
+                        </ng-container>                        
+                    </td>
+                    <td style="min-width: 150px;">
+                        <ng-container *ngIf="project?.hasTicket">
+                            <p-progressBar [value]="project?.ticket_completed_percent ? project.ticket_completed_percent : '0%'"></p-progressBar>
+                        </ng-container>
+                        <ng-container *ngIf="!project?.hasTicket">
+                            No Issue Ticket
+                        </ng-container>                        
+                    </td>                    
+                    <td style="min-width: 100px;">
+                        <p-chip
+                        [styleClass]="project?.status == STATUS.COMPLETED ? 'completed-style' : project?.status == STATUS.PENDING ? 'pending-style' : 'onHold-style'"
+                        [label]="project?.status"></p-chip>         
+                    </td>
+                    <td style="min-width: 100px;">
+                        <span 
+                        [ngClass]="project?.priority == PRIORITY.LOW ? 'low-font-color' : project?.priority == PRIORITY.MEDIUM ? 'medium-font-color' : 'high-font-color' "
+                        class="fw-bolder fs-6 text-dark">{{ project?.priority }}</span>
+                    </td>     
+                    <!-- Always add `selectedLeader` -->
+                    <!-- <td>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="pi pi-users main-color" style="font-size: 1.5rem"></span>
+                            <span class="main-color ms-2 me-3">:</span>
+                            <div class="text-gray-400">{{ project.selectedEngineersID.length + 1 }}</div>
+                        </div>
+                    </td> -->
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <ng-container *ngIf="pagination">
+        <p-paginator (onPageChange)="onPageChange($event)" [showCurrentPageReport]="true" [rows]="5" [totalRecords]="pagination.numOfDocs" [rowsPerPageOptions]="[5, 8, 10]"></p-paginator>
+    </ng-container>
+    <!-- "Back" button at "user-details" page -->
+    <ng-content *ngIf="role == ROLE.CLIENT">
+    </ng-content>
+</div>

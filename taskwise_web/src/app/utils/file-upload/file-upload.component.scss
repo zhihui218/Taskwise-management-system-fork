@@ -1,0 +1,28 @@
+.upload_btn{
+    // background-color: var(--bs-gray-200);
+    background: #dee2e6;
+    border-color: var(--bs-gray-100);
+    // color: var(--bs-gray-700);
+    color: #495057;
+    transition: color 0.2s ease;
+}
+
+.plus_icon{
+    font-weight: bolder;
+    color: black;
+    margin-right: 15px;
+    font-size: 1.5rem;
+}
+
+
+.file_display{
+    min-width: 100px;
+    max-width: 200px;
+}
+
+.upload_file{
+    color: #495057;
+    text-align: center;
+    background: #dee2e6;
+    padding: 5px 12px;
+}

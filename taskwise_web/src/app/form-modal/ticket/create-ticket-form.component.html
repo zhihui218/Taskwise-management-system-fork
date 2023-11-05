@@ -1,0 +1,75 @@
+<div class="card mb-5 mb-xl-10">
+    <div id="kt_account_profile_details" class="collapse show">
+        <form [formGroup]="ticketForm" (ngSubmit)="isEditMode ? update() : createTicket()" novalidate="" class="form">
+            <div class="card-body border-top p-9">
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">Ticket Name</label>
+                    <div class="col-lg-8 fv-row">
+                        <input [readOnly]="!authService.isClient()" formControlName="name" type="text" class="form-control form-control-lg form-control-solid" placeholder="Enter Ticket Name" name="name" />
+                    </div>
+                </div>
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span
+                            class="required">Priority</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown [readonly]="!authService.isClient()" formControlName="priority" [options]="priority"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span
+                            class="required">Reason</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <textarea [readOnly]="!authService.isClient()" formControlName="description" #messageInput class="form-control form-control-flush mb-3" rows="3" data-kt-element="input" placeholder="Type the description" name="description"></textarea>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="">Attachment</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <!-- Client is able to "manage" attachments -->
+                        <app-file-upload #fileService 
+                        *ngIf="authService.isClient()"
+                            [isEditMode]="true" 
+                            [uploadedFile]="ticket?.attachments" 
+                            (onFileSelected)="updateSelectedFiles($event)" 
+                            (onDeleteChosen)="deleteUploadedFiles($event)">
+                        </app-file-upload>
+                        <!-- Manager / Engineer can ONLY "view" the attachments of ticket -->
+                        <app-file-upload #fileService 
+                        *ngIf="!authService.isClient()"
+                            [isEditMode]="false"
+                            [uploadedFile]="ticket?.attachments">
+                        </app-file-upload>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end align-items-center py-6 px-9">
+                <button *ngIf="authService.isClient()" type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary" [disabled]="ticketForm.invalid || (isLoadingTic$ | async)">
+                    <ng-container *ngIf="isLoadingTic$ | async">
+                        <span class="indicator-progress" [style.display]="'block'">
+                        Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </ng-container>
+                    <ng-container *ngIf="(isLoadingTic$ | async) === false">
+                        <span class="indicator-label">{{ isEditMode ? "Done" : "Create Ticket" }}</span>
+                    </ng-container>
+                </button>
+                <!-- Button used by "Manager" / "Engineer" -->
+                <button *ngIf="!authService.isClient()" type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary" [disabled]="ticketForm.invalid || (isLoadingTic$ | async)">
+                    <ng-container *ngIf="isLoadingTic$ | async">
+                        <span class="indicator-progress" [style.display]="'block'">
+                        Please wait...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </ng-container>
+                    <ng-container *ngIf="(isLoadingTic$ | async) === false">
+                        <span class="indicator-label">"Update</span>
+                    </ng-container>
+                </button>
+            </div>
+    </form>
+    </div>
+</div>

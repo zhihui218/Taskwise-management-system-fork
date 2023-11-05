@@ -1,0 +1,11 @@
+.graph-border-right {
+  border-right: 1px solid #DEE2E6;
+}
+
+.graph-border-left {
+  border-left: 1px solid #DEE2E6;
+}
+
+.graph-height {
+  min-height: 300px;
+}/*# sourceMappingURL=monthly-report.component.css.map */

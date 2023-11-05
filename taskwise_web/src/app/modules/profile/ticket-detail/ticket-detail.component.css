@@ -1,0 +1,25 @@
+.bottom-box {
+  background: #fbfbfb;
+  padding: 20px;
+  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+}
+
+.top-15 {
+  top: 15%;
+}
+
+.right-5 {
+  right: 5%;
+}
+
+@media only screen and (max-width: 576px) {
+  .footer_btn {
+    flex-direction: column;
+  }
+  .footer_btn button:first-child {
+    margin-bottom: 15px;
+  }
+  .back_btn {
+    margin-bottom: 0 !important;
+  }
+}/*# sourceMappingURL=ticket-detail.component.css.map */

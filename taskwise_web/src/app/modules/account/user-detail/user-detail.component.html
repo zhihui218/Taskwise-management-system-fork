@@ -1,0 +1,78 @@
+<p-skeleton *ngIf="!(user)" class="card" height="10rem"></p-skeleton>
+<ng-container *ngIf="user">
+    <!-- Profile Details -->
+    <div class="row gy-5 gx-xl-8">
+        <div class="col-12">
+            <div class="rounded-2 mb-7 card">
+                <div class="card-header border-0">
+                    <div class="card-title m-0">
+                        <span class="fs-2 fw-bold text-gray-600 m-0">Profile Details</span>
+                    </div>
+                </div>
+                <div class="card-body pt-0 d-flex align-items-center">
+                    <div class="row w-100">
+                        <div class="col-12 col-sm-5 align-self-start">
+                            <div class="mb-4 mb-sm-0 d-flex flex-column align-items-center left-separator bottom-separator">
+                                <div class="symbol symbol-125px symbol-circle mb-5">
+                                    <img alt="Pic" [src]="user.profile ? user.profile['profile_url'] : './assets/media/avatars/blank.png'" />
+                                </div>
+                                <span class="fs-3 text-gray-800 fw-bolder mb-0">{{ user.name }}</span>
+                                <div *ngIf="user.role == ROLE.ENGINEER" class="fs-4 fw-bold text-gray-400">Technician</div>
+                                <div *ngIf="engineerRemarks" class="d-flex justify-content-center flex-wrap mt-3">
+                                    <div *ngIf="engineerRemarks.taskCompletionRate != null" class="border border-gray-300 border-dashed rounded min-w-125px py-3 mx-3 px-4 mb-3">
+                                        <div class="fs-6 fw-bolder text-gray-700">{{ engineerRemarks.taskCompletionRate }}</div>
+                                        <div class="fw-bold text-gray-400">Task Completion Rate</div>
+                                    </div>
+                                    <div *ngIf="engineerRemarks.ticketResolutionRate != null" class="border border-gray-300 border-dashed rounded min-w-125px py-3 mx-3 px-4 mb-3">
+                                        <div class="fs-6 fw-bolder text-gray-700">{{ engineerRemarks.ticketResolutionRate }}</div>
+                                        <div class="fw-bold text-gray-400">Ticket Resolution Rate</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-sm-7">
+                            <div class="d-flex flex-column">
+                                <span *ngIf="user.role == ROLE.CLIENT" class="fs-6 text-muted fw-bold mb-3">Company: <span class="fs-6 text-gray-800 fw-bolder">{{ user.company_name }}</span></span>
+                                <span *ngIf="user.role == ROLE.ENGINEER" class="fs-6 text-muted fw-bold mb-3">Joining Date: <span class="fs-6 text-gray-800 fw-bolder">{{ user.joining_date | date:'d MMMM yyyy' }}</span></span>
+                                <span class="fs-6 text-muted fw-bold mb-3">Email: <span class="fs-6 text-gray-800 fw-bolder">{{ user.email }}</span></span>
+                                <span class="fs-6 text-muted fw-bold mb-3">Phone: <span class="fs-6 text-gray-800 fw-bolder">{{ user?.phone || 'N/A' }}</span></span>
+                                <span *ngIf="user.role == ROLE.ENGINEER" class="fs-6 text-muted fw-bold mb-3">Year of Experience: <span class="fs-6 text-gray-800 fw-bolder">{{ DateFormatter.calculateYearOfExperience(user.joining_date) }} year(s)</span></span>
+                                <span *ngIf="user.role == ROLE.ENGINEER" class="fs-6 text-muted fw-bold mb-3">Current Working Hour: <span class="fs-6 text-gray-800 fw-bolder">{{ user.currentWorkingHour.toFixed(2) }}</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project list of the "CLIENT" -->
+    <app-project-table *ngIf="user.role == ROLE.CLIENT" [role]="user.role" [client_id]="user._id">
+        <div class="footer-btn d-flex justify-content-between py-6 px-9">
+            <button type="button" class="btn btn-light btn-active-light-primary me-2" (click)="goBack()">
+                Back
+            </button>
+        </div>
+    </app-project-table>
+
+    <!-- Performance Review (For "ENGINEER") -->
+    <p-skeleton *ngIf="user.role == ROLE.ENGINEER && !(engineerRemarks)" class="card" height="10rem"></p-skeleton>
+    <app-card3
+    *ngIf="engineerRemarks"
+    [name]="user.name"
+    [avatar]="user.profile ? user.profile['profile_url'] : './assets/media/avatars/blank.png'"
+    [engineerRemarkAndKPI]="engineerRemarks"
+    job="Technician">
+    <div class="footer-btn d-flex flex-column align-items-center py-6 px-9">
+        <button type="button" class="w-100 w-md-50 btn btn-light btn-active-light-primary me-2" (click)="goBack()">
+            Back
+        </button>
+        <button *ngIf="!isPredictOpen" (click)="togglePredictionForm()" type="button" class="w-100 w-md-50 btn btn-success me-2 position-relative mt-3">
+            <i class="bi bi-question-circle position-absolute top-0 end-0" style="margin-top: 5px"  pTooltip="Key in relevant data to predict your employee's future performance"></i>
+            Predict Performance
+        </button>
+    </div>
+    <app-predict-performance *ngIf="isPredictOpen" [current_engineer]="user" (closePredictForm)="togglePredictionForm()" (updatedUser)="updateUser($event)"></app-predict-performance>
+    </app-card3>
+</ng-container>

@@ -1,0 +1,69 @@
+<div class="card mb-5 mb-xl-10">
+    <div id="kt_account_profile_details" class="collapse show">
+        <form [formGroup]="detailsForm" (ngSubmit)="saveSettings(_id)" novalidate="" class="form">
+            <div class="card-body border-top p-9">
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">Profile Picture</label>
+                    <div class="col-lg-8">
+                        <div class="image-input image-input-outline" data-kt-image-input="true" [style.background-image]="'url(./assets/media/avatars/blank.png)'">
+                            <div class="image-input-wrapper w-125px h-125px position-relative">
+                                <div class="upload_icon_border position-absolute bottom-0 end-0" (click)="fileInput.click()">
+                                    <i class="pi pi-upload" style="font-size: 1rem; color: white"></i>
+                                </div>
+                                <input #fileInput accept="image/png, image/jpeg" type="file" hidden (change)="onFileSelected($event)">
+                                <img *ngIf="!imageUrl" src="./assets/media/avatars/blank.png" height="100%" width="100%" />
+                                <img *ngIf="imageUrl" [src]="imageUrl" height="100%" width="100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">Name</label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="name" type="text" class="form-control form-control-lg form-control-solid" placeholder="Name" name="name" />
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Contact Phone</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="phone" type="tel" class="form-control form-control-lg form-control-solid" placeholder="Phone Number" name="phone" />
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Password</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="position-relative">
+                            <input formControlName="password" [type]="showPassword ? 'text' : 'password'" class="form-control form-control-lg form-control-solid" id="password" name="password" placeholder="Enter New Password" />
+                            <i *ngIf="!showPassword" class="bi bi-eye-fill position-absolute password_icon" (click)="toggleShowPassword()"></i>
+                            <i *ngIf="showPassword" class="bi bi-eye-slash-fill position-absolute password_icon" (click)="toggleShowPassword()"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Confirm Password</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="position-relative">
+                            <input formControlName="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" class="form-control form-control-lg form-control-solid" id="confirmPassword" name="confirmPassword" placeholder="Re-enter New Password" />
+                            <i *ngIf="!showConfirmPassword" class="bi bi-eye-fill position-absolute password_icon" (click)="toggleShowConfirmPassword()"></i>
+                            <i *ngIf="showConfirmPassword" class="bi bi-eye-slash-fill position-absolute password_icon" (click)="toggleShowConfirmPassword()"></i>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="detailsForm.hasError('InvalidPassword')" class="d-flex">
+                    <p class="error_message">*{{ detailsForm.getError('InvalidPassword').message }}</p>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end py-6 px-9">
+                <button type="submit" class="btn btn-primary" [disabled]="(isLoading$ | async) || detailsForm.invalid">
+                      <ng-container *ngIf="!(isLoading$ | async)">Save</ng-container>
+                      <ng-container *ngIf="isLoading$ | async">
+                        <span class="indicator-progress" [style.display]="'block'">
+                            Please wait...{{ " " }}
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </ng-container>
+                    </button>
+            </div>
+        </form>
+    </div>
+</div>

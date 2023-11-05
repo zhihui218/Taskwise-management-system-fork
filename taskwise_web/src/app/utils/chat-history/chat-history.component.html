@@ -1,0 +1,35 @@
+<div class="rounded-2 card">
+    <div class="card-header border-0">
+        <div class="card-title m-0">
+            <h3 class="fw-bolder">Chat</h3>
+        </div>
+
+        <div class="card-toolbar">
+            <a (click)="markAllUnreadChatAsRead()" class="fw-bold cursor-pointer fs-7 ms-5 position-relative d-flex align-items-center">
+                <span style="color: blue; text-decoration: underline;">Mark all as read</span>
+            </a>
+        </div>
+    </div>
+    <div style="background-color: rgb(245, 249, 255)" class="card-body pt-0">
+        <p-skeleton *ngIf="isLoading" styleClass="px-6 py-8 rounded-2 mb-7 card position-relative"></p-skeleton>
+        <ng-container *ngIf="!isLoading">
+            <div (click)="closePanel.emit(); navigateToDetails(i);" *ngFor="let unread_chat of unread_chat_list; let i = index" class="unread_chat cursor-pointer d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <p-avatar image="{{ unread_chat?.sender_profile ? unread_chat.sender_profile['profile_url'] : './assets/media/avatars/blank.png'}}" size="large" shape="circle"></p-avatar>
+                <div class="ms-4 d-flex flex-column">
+                    <span style="max-width: 200px;" class="text-wrap fs-7 fw-bolder text-gray-800">Receive new message(s)</span>
+                    <span class="d-flex flex-column">
+                        <span class="fs-8 fw-normal text-wrap"><span class="fw-bolder">{{ AuthService.isEngineer() ? "Client" : "Engineer" }}:</span> {{ unread_chat.sender_name }}</span>
+                        <span class="fs-8 fw-normal text-wrap"><span class="fw-bolder">Ticket:</span> {{ unread_chat.ticket_name }}</span>
+                    </span>
+                </div>
+                </div>
+                <p-badge value="{{ unread_chat.unreadCount }}"></p-badge>
+            </div>
+            <div *ngIf="unread_chat_list?.length == 0" class="d-flex flex-column justify-content-center align-items-center py-5">
+                <span class="fw-bold text-muted fs-6">No Unread Chat</span>
+                <!-- <button (click)="loadChat()" class="btn btn-sm btn-primary mt-2 rounded-pill" type="button">Sync</button> -->
+            </div>
+        </ng-container>
+    </div>
+</div>

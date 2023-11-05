@@ -1,0 +1,52 @@
+<div class="d-flex flex-wrap flex-stack mb-6">
+    <h3 class="fw-bolder my-2">
+        Recent Projects
+        <span class="fs-6 text-gray-400 fw-bold ms-1">{{ selectedStatus }}</span>
+    </h3>
+
+    <div class="d-flex flex-wrap my-2">
+        <div class="me-4">
+            <select name="status" data-control="select2" data-hide-search="true" class="form-select form-select-sm form-select-white w-125px" [(ngModel)]="selectedStatus" (ngModelChange)="sortProjectByStatus($event)">
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+        <a *ngIf="authService.isManager()" (click)="openProjectForm()" class="btn btn-primary btn-sm cursor-pointer">New Project</a>
+    </div>
+</div>
+
+<div class="row g-6 g-xl-9 position-relative">
+    <ng-container *ngIf="(isLoadingPro$ | async) || (isLoadingTask$ | async) || (isLoadingTicket$ | async)">
+        <div class="loading-page">
+            <div class="loader"></div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!(isLoadingPro$ | async) && !(isLoadingTask$ | async) && !(isLoadingTicket$ | async)">
+        <ng-container *ngIf="displayedProjects.length == 0">
+            <span class="d-flex justify-content-center fs-2 text-gray-400 fw-bold ms-1">No matched project is found</span>
+        </ng-container>
+        <ng-container *ngIf="displayedProjects.length > 0">
+            <div *ngFor="let project of displayedProjects" class="col-md-6 translate_y pointer-cursor">
+                <app-card2 (click)="displayDetails(project)"
+                    list_type="Project"
+                    icon="./assets/media/svg/brand-logos/plurk.svg" 
+                    badgeColor="primary" 
+                    status="{{ project?.status }}" 
+                    statusColor="primary" 
+                    title="{{ project?.name }}" 
+                    description="{{ project?.description }}" 
+                    date="{{ project?.due_date | date:'MMMM d, yyyy' }}"
+                    budget="{{ project?.priority }}" 
+                    [numOfTask]="project?.numOfTask?.numOfTasks"
+                    [numOfTicket]="project?.numOfTicket?.numOfTickets">
+                </app-card2>
+            </div>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="pagination">
+        <!-- first => Determine the 1st index of element in current page to render the correct `page` & `page number` -->
+        <p-paginator (onPageChange)="onPageChange($event)" [showCurrentPageReport]="true" [rows]="4" [first]="(page - 1) * limit" [totalRecords]="pagination.numOfDocs" [rowsPerPageOptions]="[4,6,10]"></p-paginator>
+    </ng-container>
+</div>

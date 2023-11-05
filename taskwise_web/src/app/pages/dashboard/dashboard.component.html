@@ -1,0 +1,137 @@
+<!-- Monthly Report to be printed -->
+<app-monthly-report *ngIf="thisMonthPro && thisMonthTask && thisMonthTic && (isLoadingPdf$ | async)"
+style="position: absolute; z-index: -9999; opacity: 0"
+#monthly_report
+[thisMonthProject]="thisMonthPro"
+[thisMonthTask]="thisMonthTask"
+[thisMonthTicket]="thisMonthTic"></app-monthly-report>
+<!-- begin::Row -->
+<div *ngIf="authService.isManager()" class="row gy-5 g-xl-8 mb-5">
+  <div class="col-md-4 col-10">
+    <button (click)="generateMonthlyReport()" class="btn btn-lg btn-primary" [disabled]="isLoadingPdf$ | async">
+      <ng-container *ngIf="(isLoadingPdf$ | async)">
+          <span class="indicator-progress" [style.display]="'block'">
+            Generating might take a little more time...
+          <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+          </span>
+      </ng-container>
+      <ng-container *ngIf="!(isLoadingPdf$ | async)">
+          <span class="indicator-label">Generate Monthly Report</span>
+      </ng-container>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="authService.isManager()" class="row gy-5 g-xl-8">
+  <div class="col-md-4 col-12">
+    <app-first-card [model_type]="TYPE.PROJECT" [model]="projects"></app-first-card>
+  </div>
+  <div class="col-md-4 col-12">
+    <app-first-card [model_type]="TYPE.TASK" [model]="tasks"></app-first-card>
+  </div>
+  <div class="col-md-4 col-12">
+    <app-first-card [model_type]="TYPE.TICKET" [model]="tickets"></app-first-card>
+  </div>
+</div>
+  
+<div *ngIf="authService.isManager()" class="row gy-5 gx-xl-8">
+<!-- end::Row -->
+  <div class="col-6">
+    <app-second-card [user_type]="ROLE.ENGINEER" [count]="numOfEngineer"></app-second-card>
+  </div>
+  <div class="col-6">
+    <app-second-card [user_type]="ROLE.CLIENT" [count]="numOfClient"></app-second-card>
+  </div>
+</div>
+
+<div *ngIf="!authService.isClient()" class="row gy-5 gx-xl-8">
+  <div class="col-12">
+    <div class="rounded-2 mb-7 card">
+      <div class="card-header border-0">
+          <div class="card-title m-0">
+              <span class="fs-4 fw-bold text-gray-600 m-0">Task Distribution</span>
+          </div>
+          <div class="card-toolbar">
+              <p-dropdown [options]="timeFrame" [(ngModel)]="timeFrameTask" (ngModelChange)="filterList('task-distribution')"></p-dropdown>
+          </div>
+      </div>
+      <div class="card-body pt-0">
+          <div *ngIf="!isLoading" class="position-relative graph-container">
+              <canvas #task_chart id="task-distribution"></canvas>
+          </div>
+      </div>
+    </div>  
+  </div>
+</div>
+
+<div class="row gy-5 gx-xl-8">
+  <div *ngIf="!authService.isEngineer()" class="col-md-6 col-12">
+    <div class="rounded-2 mb-7 card col-12">
+      <div class="card-header border-0">
+        <div class="card-title m-0">
+          <span class="fs-4 fw-bold text-gray-600 m-0">Project Status</span>
+          </div>
+          <div class="card-toolbar">
+            <p-dropdown [options]="timeFrame" [(ngModel)]="timeFramePro" (ngModelChange)="filterList('project-distribution')"></p-dropdown>
+          </div>
+        </div>
+        <div class="card-body pt-0">
+          <div *ngIf="!isLoading" class="position-relative graph-container">
+            <canvas #project_chart id="project-distribution"></canvas>
+          </div>
+        </div>
+  </div>
+  </div>
+
+  <div *ngIf="authService.isEngineer()" class="col-md-6 col-12">
+    <div class="rounded-2 mb-7 card col-12">
+      <div class="card-header border-0">
+        <div class="card-title m-0">
+          <span class="fs-4 fw-bold text-gray-600 m-0">Weekly Workload</span>
+          </div>
+        </div>
+      <div class="card-body pt-0">
+        <div *ngIf="!isLoading" class="position-relative graph-container">
+          <canvas #workload_bar id="workload-bar-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-12">
+    <div class="rounded-2 mb-7 card col-12">
+      <div class="card-header border-0">
+        <div class="card-title m-0">
+          <span class="fs-4 fw-bold text-gray-600 m-0">Ticket Status</span>
+          </div>
+          <div class="card-toolbar">
+            <p-dropdown [options]="timeFrame" [(ngModel)]="timeFrameTic" (ngModelChange)="filterList('ticket-distribution')"></p-dropdown>
+          </div>
+        </div>
+      <div class="card-body pt-0">
+        <div *ngIf="!isLoading" class="position-relative graph-container">
+          <canvas #ticket_chart id="ticket-distribution"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row gy-5 gx-xl-8">
+  <div class="col-12">
+    <app-project-table [role]="authService.currentUserValue.role" [client_id]="authService.currentUserValue.role == ROLE.MANAGER ? '' : authService.currentUserValue._id" *ngIf="!authService.isEngineer()"></app-project-table>
+  </div>
+</div>
+
+<div *ngIf="!authService.isClient()" class="row gy-5 gx-xl-8">
+  <div class="col-12">
+    <app-task-table [page]="1" [limit]="10" [rowPerPageOptions]="[10, 15, 20]"></app-task-table>
+  </div>
+</div>
+
+<div class="row gy-5 gx-xl-8">
+  <div class="col-12">
+    <app-ticket-table [page]="1" [limit]="10" [rowPerPageOptions]="[10, 15, 20]"></app-ticket-table>
+  </div>
+</div>
+

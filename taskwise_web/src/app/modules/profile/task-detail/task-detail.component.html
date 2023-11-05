@@ -1,0 +1,219 @@
+<!-- Task Details -->
+
+<div class="card mb-5 mb-xl-10 position-relative" id="kt_profile_details_view">
+    <div *ngIf="isDeleting" class="loading-page">
+        <div class="loader"></div>
+    </div>
+    <div class="card-header cursor-pointer">
+        <div class="card-title m-0">
+            <h3 class="fw-bolder m-0">
+                {{ isEditMode ? "Update Task" : "Task Details" }}
+            </h3>
+        </div>
+        <div class="d-flex align-items-center">
+            <button *ngIf="authService.isManager()" (click)="toggleEditMode()" class="btn btn-primary align-self-center me-3">
+                {{ isEditMode ? "Close" : "Edit" }}
+            </button>
+            <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+            <button *ngIf="authService.isManager()" (click)="openConfirmationDialog()" class="btn btn-danger align-self-center me-3">
+                Delete
+            </button>
+            <button *ngIf="authService.isEngineer()" (click)="navigateToProject()" class="btn btn-primary align-self-center me-3">
+                View Project Details
+            </button>
+            <a *ngIf="authService.isClient()" (click)="openTicketForm()" class="btn btn-primary btn-sm cursor-pointer">New Ticket</a>
+        </div>
+    </div>
+
+    <div class="card-body p-9">
+        <ng-container *ngIf="isEditMode">
+            <app-create-task-form 
+            [isEditMode]="isEditMode" 
+            [task]="task" 
+            (updateTask)="updateTask($event)"></app-create-task-form>
+        </ng-container>
+
+        <ng-container *ngIf="!isEditMode">
+            <div *ngIf="task?.ticket_progress?.totalCounts" class="row mb-7">
+                <div class="chart_display col-12 align-self-center">
+                    <canvas #ticket_chart id="ticketProgress"></canvas>
+                </div>
+            </div>
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Task Name:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTask$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTask$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">{{ task?.name }}</span>
+                    </ng-container>
+                </div>
+            </div>
+
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Project Name:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingPro$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingPro$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">{{ task?.project?.name }}</span>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Due Date:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTask$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTask$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">{{ task?.due_date | date:'MMMM d, yyyy' }}</span>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Estimated Completed Time:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTask$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTask$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">
+                            <span class="me-2" *ngIf="task?.day">{{ task.day }} day{{ task.day > 1 ? 's' : ''}}</span>
+                            <span class="me-2" *ngIf="task?.hour">{{ task.hour }} hour{{ task.hour > 1 ? 's' : ''}}</span>
+                            <span *ngIf="task?.minute">{{ task.minute }} minute{{ task.minute > 1 ? 's' : ''}}</span>
+                        </span>
+                    </ng-container>
+                </div>
+            </div>
+
+            <ng-container *ngIf="!(isLoadingTask$ | async)">
+                <div *ngIf="task?.completed_date" class="row mb-7">
+                    <label class="col-lg-2 fw-bold text-muted">Completed By:</label>
+    
+                    <div class="col-lg-10">
+                        <ng-container *ngIf="!(isLoadingTask$ | async)">
+                            <span class="fw-bolder fs-6 text-dark">{{ task?.completed_date | date:'MMMM d, yyyy' }}</span>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Priority:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTask$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTask$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">{{ task?.priority }}</span>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Status:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="(isLoadingTask$ | async)">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTask$ | async)">
+                        <p-chip
+                        [styleClass]="task?.status == STATUS.COMPLETED ? 'completed-style' : task?.status == STATUS.PENDING ? 'pending-style' : 'onHold-style'"
+                        [label]="task?.status"></p-chip>                        
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Main Contact Person:</label>
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingUser$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingUser$ | async)">
+                      <!-- <ng-container *ngIf="!selectedEngineerList">
+                        No team member selected
+                        </ng-container> -->
+                        <p-chip class="me-2" label="{{task?.selectedLeader?.name}}" image="{{ task?.selectedLeader?.profile ? task?.selectedLeader?.profile['profile_url'] : './assets/media/avatars/blank.png'}}"></p-chip>
+                    </ng-container>
+                </div>
+            </div>
+
+            <ng-container *ngIf="!(isLoadingUser$ | async)">
+                <div *ngIf="task?.selectedEngineers && task?.selectedEngineers?.length > 0" class="row mb-7">
+                    <label class="col-lg-2 fw-bold text-muted">Other Member:</label>
+                    <div class="col-lg-10">
+                        <p-chip class="me-2" *ngFor="let engineer of task?.selectedEngineers" label="{{engineer?.name}}" image="{{ engineer?.profile ? engineer?.profile['profile_url'] : './assets/media/avatars/blank.png'}}"></p-chip>
+                    </div>
+                </div>
+            </ng-container>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Description:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTask$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTask$ | async)">
+                        <textarea readOnly class="form-control form-control-flush mb-3" rows="3" data-kt-element="input" [value]="task?.description"></textarea>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Attachment:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTask$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTask$ | async)">
+                        <span class="fw-bold fst-italic" *ngIf="!task?.attachments">No file is uploaded</span>
+                        <app-file-upload *ngIf="task?.attachments"
+                            #fileService 
+                            [isEditMode]="false"
+                            [uploadedFile]="task.attachments">
+                        </app-file-upload>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container>
+        <!-- Ticket List -->
+        <p-accordion *ngIf="task">
+            <p-accordionTab header="Ticket List">
+                <app-ticket-table #ticketTable [task_id]="task._id" [page]="1" [limit]="6" [rowPerPageOptions]="[6, 8, 10]"></app-ticket-table>
+            </p-accordionTab>
+        </p-accordion>
+
+        <div class="footer-btn card-footer d-flex justify-content-end align-items-center py-6 px-9">
+            <button type="button" class="btn btn-light btn-active-light-primary me-2" (click)="goBack()">
+                Back
+            </button>
+            <button *ngIf="!authService.isClient() && task" [disabled]="!enableStatusBtn()" [ngClass]="task?.status == 'Completed' ? 'completed-style' : ''" type="button" (click)="updateTaskStatus()" class="btn btn-lg btn-primary position-relative">
+                <ng-container *ngIf="(isLoadingTask$ | async)">
+                    <span class="indicator-progress" [style.display]="'block'">
+                    Updating...
+                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                </ng-container>
+                <ng-container *ngIf="!(isLoadingTask$ | async)">
+                    <span class="indicator-label">{{ task?.status == "Completed" ? 'Completed' : 'Mark As Completed'}}</span>
+                </ng-container>
+                <div *ngIf="task && !enableStatusBtn()" class="position-absolute start-0 error_message bottom-position">*Please solve issue tickets</div>
+            </button>
+        </div>
+    </div>
+</div>

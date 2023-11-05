@@ -1,0 +1,18 @@
+<router-outlet></router-outlet>
+
+<!-- Wi-Fi Disconnection -->
+<div *ngIf="!(isWifiConnected$ | async)" class="loading-page">
+    <div class="d-flex flex-column align-items-center">
+        <div class="loader"></div>
+        <span class="fs-2 fw-bold mt-3">Please check your wifi connection...</span>
+    </div>
+</div>
+<!-- Display result of APIs (Success / Failure Message) -->
+<p-toast [breakpoints]="{'768px': {width: '100%'}, '1920px': {width: '70%'}}" position="top-center"></p-toast>
+<!-- Other Notification -->
+<p-toast key="notification"></p-toast>
+<!-- Chat Notification -->
+<p-toast key="chat-notification" class="cursor-pointer" (click)="navigateToTicketDetails()" position="bottom-right"></p-toast>
+
+
+

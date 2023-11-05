@@ -1,0 +1,105 @@
+<div id="content" class="container">
+    <header class="row gy-5 g-xl-8">
+        <div class="col-2">
+            <img src="./assets/media/taskwise/netsinity_logo.png" style="object-fit: contain; height: 100%; width: 100%"/>
+        </div>
+        <div class="col-6 d-flex align-items-end">
+            <div class="row text-center fs-7">
+                <span class="text-dark fw-bolder fs-5">NETSINITY SDN BHD</span>
+                <span>(644298-V)</span>
+                <span>NO.87-1 (SUITE E12-1) 1ST FLOOR </span>
+                <span>JALAN TKS 1, KAJANG SENTRAL BUSINESS AVENUE</span>
+                <span>43000 KAJANG, SELANGOR DARUL EHSAN</span>
+            </div>
+        </div>
+        <div class="col-4 d-flex align-items-center">
+            <div class="row fs-7">
+                <span>
+                    <i class="bi bi-telephone-fill me-2 fs-7"></i>
+                    :&nbsp;03 - 87376264
+                </span>
+                <span>
+                    <i class="bi bi-envelope-fill me-2 fs-7"></i>
+                    :&nbsp;support@netsys.com.my</span>
+            </div>
+        </div>
+    </header>
+    <section class="fs-5">
+        <hr />
+        <div class="row">
+            <span class="text-dark fw-bolder fs-3">Title:&nbsp;{{ COMPANY }} Monthly Report</span>
+            <span><span class="text-dark fw-bolder">Created Date:</span>&nbsp;{{ dateFormatter.todayDate | date:'d MMM yyyy' }}</span>
+            <span class="text-dark fw-bolder fs-7">*This report is automatically generated each month for the company's analysis.</span>
+        </div>
+        <hr/>
+    </section>
+    <section id="project-overview">
+        <div class="row">
+            <div class="col-6 align-self-start">
+                <div class="position-relative graph-border-right">
+                    <canvas id="project"></canvas>
+                </div>
+            </div>
+            <div class="col-6 position-relative">
+                <u class="text-dark fw-bolder fs-1">Project Overview</u>
+                <br />
+                <p class="fs-3 text-wrap mt-2" style="width: 100%">
+                    From <u class="fw-bold">{{ dateFormatter.startDayOfMonth | date: 'd MMM' }} to {{ dateFormatter.todayDate | date:'d MMM' }}</u>, there're a total of <span class="text-dark fw-bolder">{{ thisMonthProject['Total'] }}</span> projects:
+                </p>
+                <ul class="fs-3">
+                    <li *ngIf="thisMonthProject[STATUS.PENDING] > 0">Pending - {{ thisMonthProject[STATUS.PENDING] }} <span class="fw-bold text-muted fs-2">{{ '(' + (thisMonthProject[STATUS.PENDING] / thisMonthProject['Total']) * 100 + '%)'}}</span></li>
+                    <li *ngIf="thisMonthProject[STATUS.ONHOLD] > 0">On Hold - {{ thisMonthProject[STATUS.ONHOLD] }} <span class="fw-bold text-muted fs-2">{{ '(' + (thisMonthProject[STATUS.ONHOLD] / thisMonthProject['Total']) * 100 + '%)'}}</span></li>
+                    <li *ngIf="thisMonthProject[STATUS.COMPLETED] > 0">Completed - {{ thisMonthProject[STATUS.COMPLETED] }} <span class="fw-bold text-muted fs-2">{{ '(' + (thisMonthProject[STATUS.COMPLETED] / thisMonthProject['Total']) * 100 + '%)'}}</span></li>         
+                </ul>
+            </div>
+        </div>
+    </section>
+    <hr/>
+    <section id="task-overview">
+        <div class="row">
+            <div class="col-12 graph-height">
+                <div class="position-relative col-12 graph-height">
+                    <canvas id="task"></canvas>
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+                <u class="text-dark fw-bolder fs-1">Task Overview</u>
+                <br />
+                <p class="fs-3 text-wrap mt-2" style="width: 100%">
+                    From <u class="fw-bold">{{ dateFormatter.startDayOfMonth | date: 'd MMM' }} to {{ dateFormatter.todayDate | date:'d MMM' }}</u>, there're a total of <span class="text-dark fw-bolder">{{ thisMonthTask['Total'] }}</span> Tasks:
+                </p>
+                <ul class="fs-3">
+                    <li *ngIf="thisMonthTask['pendingAmount'] > 0">Pending - {{ thisMonthTask['pendingAmount'] }} <span class="fw-bold text-muted fs-2">{{ '(' + thisMonthTask['pendingPercent'] + '%)'}}</span></li>
+                    <li *ngIf="thisMonthTask['onHoldAmount'] > 0">On Hold - {{ thisMonthTask['onHoldAmount'] }} <span class="fw-bold text-muted fs-2">{{ '(' + thisMonthTask['onHoldPercent'] + '%)'}}</span></li>
+                    <li *ngIf="thisMonthTask['completedAmount'] > 0">Completed - {{ thisMonthTask['completedAmount'] }} <span class="fw-bold text-muted fs-2">{{ '(' + thisMonthTask['completedPercent'] + '%)'}}</span></li>         
+                </ul>
+            </div>
+        </div>
+    </section>
+    <hr/>
+    <section id="ticket-overview">
+        <div class="row">
+            <div class="col-6 align-self-start">
+                <div class="position-relative graph-border-right">
+                    <canvas id="ticket"></canvas>
+                </div>
+            </div>
+            <div class="col-6">
+                <u class="text-dark fw-bolder fs-1">Ticket Overview</u>
+                <br />
+                <p class="fs-3 text-wrap mt-2" style="width: 100%">
+                    From <u class="fw-bold">{{ dateFormatter.startDayOfMonth | date: 'd MMM' }} to {{ dateFormatter.todayDate | date:'d MMM' }}</u>, there're a total of <span class="text-dark fw-bolder">{{ thisMonthTicket['Total'] }}</span> issue tickets:
+                </p>
+                <ul class="fs-3">
+                    <li *ngIf="thisMonthTicket[TICKET_STATUS.PENDING] > 0">Pending - {{ thisMonthTicket[TICKET_STATUS.PENDING] }} <span class="fw-bold text-muted fs-2">{{ '(' + (thisMonthTicket[TICKET_STATUS.PENDING] / thisMonthTicket['Total']) * 100 + '%)'}}</span></li>
+                    <li *ngIf="thisMonthTicket[TICKET_STATUS.REOPENED] > 0">Reopened - {{ thisMonthTicket[TICKET_STATUS.REOPENED] }} <span class="fw-bold text-muted fs-2">{{ '(' + (thisMonthTicket[TICKET_STATUS.REOPENED] / thisMonthTicket['Total']) * 100 + '%)'}}</span></li>
+                    <li *ngIf="thisMonthTicket[TICKET_STATUS.SOLVED] > 0">Solved - {{ thisMonthTicket[TICKET_STATUS.SOLVED] }} <span class="fw-bold text-muted fs-2">{{ '(' + (thisMonthTicket[TICKET_STATUS.SOLVED] / thisMonthTicket['Total']) * 100 + '%)'}}</span></li>         
+                </ul>
+                <p class="text-dark fw-bolder fs-5">
+                    *Note: The issue tickets without a due date is not considered here.
+                </p>
+            </div>
+        </div>
+    </section>
+    <hr/>
+</div>

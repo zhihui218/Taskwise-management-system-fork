@@ -1,0 +1,14 @@
+.graph-container{
+    min-height: 300px;
+    max-height: 400px;
+}
+
+:host::ng-deep{
+    .p-dropdown{
+        background: #ffffff;
+        border: none;
+        border-bottom: 1px solid #ced4da;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        border-radius: 0;
+    }
+}

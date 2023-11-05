@@ -1,0 +1,124 @@
+<hr/>
+<div class="card mb-5 mb-xl-10">
+    <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_profile_details" aria-expanded="true" aria-controls="kt_account_profile_details">
+        <div class="card-title m-0">
+            <h3 class="fw-bolder m-0">Key In Employee's Data</h3>
+        </div>
+        <div class="card-toolbar">
+            <i class="bi bi-x-lg" (click)="closePredictForm.emit()"></i>
+        </div>
+    </div>
+    <div id="kt_account_profile_details" class="collapse show">
+        
+        <div class="card-body border-top p-9">
+            <form [formGroup]="predictForm" (ngSubmit)="makePrediction()" novalidate="" class="form">
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Department</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="EmpDepartment" [options]="department"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Job Role</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="EmpJobRole" [options]="jobRole"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Business Travel Frequency</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="BusinessTravelFrequency" [options]="businessTravelFrequency"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">
+                        <span class="required">Hourly Rate</span>
+                        <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="Salary per hour"></i>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="d-flex align-items-center">
+                            <input style="width: 92%" min="0" formControlName="EmpHourlyRate" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                            <span style="width: 8%" class="ms-2 fw-bolder fs-8">{{COUNTRY_CURRENCY}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Job Involvement</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="EmpJobInvolvement" [options]="jobInvolvement"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Job Level</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <p-dropdown formControlName="EmpJobLevel" [options]="jobLevel"></p-dropdown>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">
+                        <span class="required">Last Salary Hike(%)</span>
+                        <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="Salary per hour"></i>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="d-flex align-items-center">
+                            <input style="width: 95%" min="0" formControlName="EmpLastSalaryHikePercent" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                            <span style="width: 5%" class="ms-2 fw-bolder fs-8">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">
+                        <span class="required">Training Times Last Year</span>
+                        <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="Number of training provided to him/her last year"></i>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="d-flex align-items-center">
+                            <input min="0" formControlName="TrainingTimesLastYear" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">
+                        <span class="required">Years Since Last Promotion</span>
+                        <i class="bi bi-question-circle-fill cursor-pointer ms-2" pTooltip="Number of years since the employee's last promotion"></i>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="d-flex align-items-center">
+                            <input min="0" formControlName="YearsSinceLastPromotion" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">
+                        <span class="required">Years With Current Manager</span>
+                    </label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="d-flex align-items-center">
+                            <input min="0" formControlName="YearsWithCurrManager" type="number" class="form-control form-control-lg form-control-solid" placeholder="Enter a number"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end py-6 px-9">
+                    <button type="submit" class="btn btn-primary" [disabled]="isLoading || predictForm.invalid">
+                        <ng-container *ngIf="!isLoading">Predict</ng-container>
+                        <ng-container *ngIf="isLoading">
+                        <span class="indicator-progress" [style.display]="'block'">
+                            Predicting...{{ " " }}
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                        </ng-container>
+                    </button>
+                </div>
+            </form>
+            <!-- Display the previous prediction -->
+            <div *ngIf="rating" class="row mb-6">
+                <p-skeleton *ngIf="isLoading" styleClass="px-6 py-8 rounded-2 mb-7 card position-relative"></p-skeleton>
+                <div *ngIf="!isLoading" class="d-flex flex-column align-items-center">
+                    <span class="fs-2 text-gray-800 fw-bolder">{{ isMadePrediction ? "Current Prediction" : "Previous Prediction" }}: </span>
+                    <p-rating [(ngModel)]="rating" [stars]="4" [readonly]="true" [cancel]="false"></p-rating>
+                    <span class="fs-5 text-gray-800 fw-bolder">{{ PERFORMANCE_RATING[rating.toString()] }}</span>    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

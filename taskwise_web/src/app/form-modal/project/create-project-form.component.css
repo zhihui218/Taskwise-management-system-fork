@@ -1,0 +1,11 @@
+:host::ng-deep .p-multiselect {
+  width: 100%;
+}
+
+:host ::ng-deep .custom-mslabel .p-multiselect-label {
+  width: 300px !important;
+  color: rgb(94, 98, 120);
+  font-weight: 600;
+  background-color: rgb(249, 249, 249);
+  font-size: 15px;
+}/*# sourceMappingURL=create-project-form.component.css.map */

@@ -1,0 +1,1 @@
+{"version":3,"sources":["ticket-detail.component.scss","ticket-detail.component.css"],"names":[],"mappings":"AAAA;EACI,mBAAA;EACA,aAAA;EACA,2CAAA;ACCJ;;ADEA;EACI,QAAA;ACCJ;;ADEA;EACI,SAAA;ACCJ;;ADEA;EACI;IACI,sBAAA;ECCN;EDEE;IACI,mBAAA;ECAN;EDGE;IACI,2BAAA;ECDN;AACF","file":"ticket-detail.component.css"}

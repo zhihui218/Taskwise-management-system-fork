@@ -1,0 +1,248 @@
+<!-- Ticket Details -->
+<div class="card mb-5 mb-xl-10 position-relative" id="kt_profile_details_view">
+    <div *ngIf="isDeleting" class="loading-page">
+        <div class="loader"></div>
+    </div>
+    <div class="card-header cursor-pointer">
+        <div class="card-title m-0">
+            <h3 class="fw-bolder m-0">
+                {{ isEditMode ? "Update Ticket" : "Ticket Details" }}
+            </h3>
+            <!-- Allow the engineer && client to chat and discuss about the issue -->
+            <div (click)="op.toggle($event)" *ngIf="ticket && ticket?.client && (!authService.isManager())" class="position-absolute top-15 right-5 btn btn-icon btn-primary w-40px h-40px pulse pulse-white" [pTooltip]="isClient ? 'Chat With Main Contact Person' : 'Chat With Client'" tooltipPosition="top">
+                <i class="bi bi-chat-fill fs-1"></i>
+            </div>
+        </div>
+        <div *ngIf="isClient" class="d-flex align-items-center">
+            <button (click)="toggleEditMode()" class="btn btn-primary align-self-center me-3">
+                {{ isEditMode ? "Close" : "Edit" }}
+            </button>
+            <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+            <button (click)="openConfirmationDialog()" class="btn btn-danger align-self-center me-3">
+                Delete
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body p-9">
+        <ng-container *ngIf="isEditMode">
+            <app-create-ticket-form 
+            [isEditMode]="isEditMode" 
+            [ticket]="ticket" 
+            (updateTicket)="updateTicket($event)" ></app-create-ticket-form>
+        </ng-container>
+
+        <ng-container *ngIf="!isEditMode">
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Ticket Name:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTic$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTic$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">{{ ticket?.name }}</span>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div *ngIf="!isClient" class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted align-self-center">Issued By:</label>
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingUser$ | async">
+                    Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingUser$ | async)">
+                        <p-chip label="{{ ticket?.client?.name }}" image="{{  ticket?.client?.profile ?  ticket?.client?.profile['profile_url'] : './assets/media/avatars/blank.png'}}"></p-chip>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Issued For:</label>
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTic$ | async">
+                    Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTic$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">{{ ticket?.task_name }}</span>
+                    </ng-container>
+                </div>
+            </div>
+
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Project Name:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingPro$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingPro$ | async)">
+                        <span class="fw-bolder fs-6 text-dark">{{ ticket?.project_name }}</span>
+                    </ng-container>
+                </div>
+            </div>
+
+            <ng-container *ngIf="!(isLoadingTic$ | async)">
+                <div *ngIf="ticket?.completed_date" class="row mb-7">
+                    <label class="col-lg-2 fw-bold text-muted">Completed By:</label>
+    
+                    <div class="col-lg-10">
+                        <ng-container *ngIf="!(isLoadingTic$ | async)">
+                            <span class="fw-bolder fs-6 text-dark">{{ ticket?.completed_date | date:'MMMM d, yyyy' }}</span>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Priority:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTic$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTic$ | async)">
+                        <span 
+                        [ngClass]="ticket?.priority == PRIORITY.LOW ? 'low-font-color' : ticket?.priority == PRIORITY.MEDIUM ? 'medium-font-color' : 'high-font-color' "
+                        class="fw-bolder fs-6 text-dark">{{ ticket?.priority }}</span>    
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Status:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="(isLoadingTic$ | async)">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTic$ | async)">
+                        <p-chip
+                        [styleClass]="ticket?.status == TICKET_STATUS.SOLVED ? 'completed-style' : ticket?.status == TICKET_STATUS.PENDING ? 'pending-style' : 'onHold-style'"
+                        [label]="ticket?.status"></p-chip>                   
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted">Description:</label>
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTic$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTic$ | async)">
+                        <textarea readOnly class="form-control form-control-flush mb-3" rows="3" data-kt-element="input" [value]="ticket?.description"></textarea>
+                    </ng-container>
+                </div>
+            </div>
+
+            <div class="row mb-7">
+                <label class="col-lg-2 fw-bold text-muted align-self-center">Attachment:</label>
+
+                <div class="col-lg-10">
+                    <ng-container *ngIf="isLoadingTic$ | async">
+                        Loading...
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTic$ | async)">
+                        <span class="fw-bold fst-italic" *ngIf="ticket?.attachments?.length == 0">No file is uploaded</span>
+                        <app-file-upload *ngIf="ticket?.attachments?.length > 0" 
+                            #fileService 
+                            [isEditMode]="false"
+                            [uploadedFile]="ticket.attachments">
+                        </app-file-upload>
+                    </ng-container>
+                </div>
+            </div>
+            <!-- Fields set by "Manager" / "Engineer" -->
+            <hr/>
+            <div class="bottom-box">
+                <form [formGroup]="engineerForm">
+                    <div class="row mb-7">
+                        <label class="col-lg-2 fw-bold text-muted">Due Date:</label>
+                        <div class="col-lg-10">
+                            <ng-container *ngIf="isLoadingTic$ | async">
+                                Loading...
+                            </ng-container>
+                            <ng-container *ngIf="!(isLoadingTic$ | async)">
+                                <!-- Viewing -->
+                                <ng-container *ngIf="!isEditDateAndAssignee">
+                                    <ng-container *ngIf="!ticket?.due_date">
+                                        No deadline is set
+                                    </ng-container>
+                                    <ng-container *ngIf="ticket?.due_date">
+                                        <span class="fw-bolder fs-6 text-dark">{{ ticket.due_date | date:'MMMM d, yyyy' }}</span>
+                                    </ng-container>
+                                </ng-container>
+                                <!-- Updating -->
+                                <ng-container *ngIf="isEditDateAndAssignee">
+                                    <input formControlName="due_date" type="date" class="form-control form-control-lg form-control-solid" name="due_date" />
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+    
+                    <div *ngIf="!authService.isEngineer()" class="row mb-7">
+                        <label class="col-lg-2 fw-bold text-muted align-self-center">Main Contact Person:</label>
+                        <div class="col-lg-10">
+                            <ng-container *ngIf="isLoadingUser$ | async">
+                                Loading...
+                            </ng-container>
+                            <ng-container *ngIf="!(isLoadingUser$ | async)">
+                                <p-chip class="me-2" label="{{ticket?.selectedLeader?.name}}" image="{{ ticket?.selectedLeader?.profile ? ticket?.selectedLeader?.profile['profile_url'] : './assets/media/avatars/blank.png'}}"></p-chip>
+                            </ng-container>
+                        </div>
+                    </div>
+                </form>
+                
+                <div *ngIf="!isClient" class=" d-flex justify-content-end align-items-center">
+                    <button (click)="toggleEditDateAndAssignee()" type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-primary" [disabled]="(isLoadingTic$ | async)">
+                        <ng-container *ngIf="isLoadingTic$ | async">
+                            <span class="indicator-progress" [style.display]="'block'">
+                            Please wait...
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </ng-container>
+                        <ng-container *ngIf="(isLoadingTic$ | async) === false">
+                            <span class="indicator-label">{{ isEditDateAndAssignee ? "Done" : "Update"}}</span>
+                        </ng-container>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
+        <div [ngClass]="authService.isClient() ? 'justify-content-end' : 'justify-content-between'" class="footer-btn card-footer d-flex align-items-center py-6 px-9 footer_btn">
+            <button *ngIf="!authService.isClient()" type="button" (click)="generateTicketReport()" class="btn btn-lg btn-primary">
+                Generate Ticket Report
+            </button>
+        <div>
+            <button type="button" class="btn btn-light btn-active-light-primary me-2 back_btn" (click)="goBack()">
+                Back
+            </button>
+            <button *ngIf="!authService.isClient()" [ngClass]="ticket?.status == TICKET_STATUS.SOLVED ? 'completed-style' : ''" type="button" (click)="updateTicketStatus()" class="btn btn-lg btn-primary">
+                    <ng-container *ngIf="(isLoadingTic$ | async)">
+                        <span class="indicator-progress" [style.display]="'block'">
+                        Updating...
+                        <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </ng-container>
+                    <ng-container *ngIf="!(isLoadingTic$ | async)">
+                        <span class="indicator-label">{{ ticket?.status == TICKET_STATUS.SOLVED ? TICKET_STATUS.SOLVED : 'Mark As Solved'}}</span>
+                    </ng-container>
+            </button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<p-overlayPanel #op
+(onShow)="enterChatRoom()"
+(onHide)="leaveChatRoom()"
+[style]="getOverlayChatWidth()">
+    <app-messenger-drawer *ngIf="ticket && ticket?.client && !authService.isManager()"
+    [contactPerson]="isClient ? ticket.selectedLeader : ticket.client"
+    [ticket_id]="ticket._id"
+    (closeChat)="op.hide()"
+    ></app-messenger-drawer>
+</p-overlayPanel>

@@ -1,0 +1,72 @@
+<div class="card mb-5 mb-xl-10">
+    <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_account_profile_details" aria-expanded="true" aria-controls="kt_account_profile_details">
+        <div class="card-title m-0">
+            <h3 class="fw-bolder m-0">Add User</h3>
+        </div>
+    </div>
+    <div id="kt_account_profile_details" class="collapse show">
+        <form [formGroup]="addUserForm" (ngSubmit)="createUser()" novalidate="" class="form">
+            <div class="card-body border-top p-9">
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">User Type</label>
+                    <div class="btn-group col-lg-8" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="role" id="btnradio1" autocomplete="off" checked (change)="setRoleValue('MANAGER')">
+                        <label class="btn btn-outline-primary" for="btnradio1">Manager</label>
+
+                        <input type="radio" class="btn-check" name="role" id="btnradio2" autocomplete="off" (change)="setRoleValue('ENGINEER')">
+                        <label class="btn btn-outline-primary" for="btnradio2">Engineer</label>
+
+                        <input type="radio" class="btn-check" name="role" id="btnradio3" autocomplete="off" (change)="setRoleValue('CLIENT')">
+                        <label class="btn btn-outline-primary" for="btnradio3">Client</label>
+                    </div>
+                </div>
+                <div *ngIf="userRole == ROLE.CLIENT" class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6">Company</label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="company_name" type="text" class="form-control form-control-lg form-control-solid" placeholder="Please enter company / organization name" name="email"/>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">Email</label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="email" type="email" class="form-control form-control-lg form-control-solid" placeholder="Please enter email..." name="email"/>
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label required fw-bold fs-6">Name</label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="name" type="text" class="form-control form-control-lg form-control-solid" placeholder="Please enter name..." name="name" />
+                    </div>
+                </div>
+                <!-- Select Joining Date of the Engineer -->
+                <div *ngIf="userRole == ROLE.ENGINEER || userRole == ROLE.MANAGER" class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6 req">Joining Date</label>
+                    <div class="col-lg-8 fv-row">
+                        <input formControlName="joining_date" type="date" class="form-control form-control-lg form-control-solid" placeholder="Select joining date" name="joiningDate" />
+                    </div>
+                </div>
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-bold fs-6"><span class="required">Password</span></label>
+                    <div class="col-lg-8 fv-row">
+                        <div class="position-relative">
+                            <input formControlName="password" [type]="showPassword ? 'text' : 'password'" class="form-control form-control-lg form-control-solid" id="password" name="password" placeholder="Enter default password..." />
+                            <i *ngIf="!showPassword" class="bi bi-eye-fill position-absolute password_icon" (click)="toggleShowPassword()"></i>
+                            <i *ngIf="showPassword" class="bi bi-eye-slash-fill position-absolute password_icon" (click)="toggleShowPassword()"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end py-6 px-9">
+                <button type="button" class="btn btn-primary" [disabled]="(isLoading$ | async) || addUserForm.invalid" (click)="createUser()">
+                    <ng-container *ngIf="!(isLoading$ | async)">Create</ng-container>
+                    <ng-container *ngIf="isLoading$ | async">
+                        <span class="indicator-progress" [style.display]="'block'">
+                            Please wait...{{ " " }}
+                            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </span>
+                    </ng-container>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,94 @@
+<div class="card-header border-0">
+  <div class="card-title m-0">
+    <span class="fs-2 fw-bold text-gray-600 m-0">Weekly Workload</span>
+  </div>
+</div>
+<div class="card-body d-flex flex-center flex-column p-9" style="padding-top: 0 !important;">
+  <div class="w-100 w-sm-75 position-relative graph-container">
+    <canvas #workload_bar id="workload-bar-chart"></canvas>
+  </div>
+</div>
+<hr/>
+
+<div class="card-header border-0">
+  <div class="card-title m-0">
+    <span class="fs-2 fw-bold text-gray-600 m-0">{{ DateFormatter.currentLongMonth }} Performance Review</span>
+  </div>
+</div>
+<div class="card-body d-flex flex-center flex-column p-9" style="padding-top: 0 !important;">
+  <div class="row w-100">
+  <!-- KPI && Performance Rating of the engineer -->
+  <div class="row w-100">
+    <div class="col-12 col-sm-6 align-self-center">
+      <div class="row gy-3">
+        <div class="col-12 col-sm-6">
+          <div class="d-flex justify-content-between">
+              <span id="ticket_progress" class="text-gray-400">Workload ({{ engineerRemarkAndKPI.workloadKPI }}%)</span>
+              <span class="text-gray-400">{{ KPI_DISTRIBUTION.WORKLOAD }}%</span>
+          </div>
+          <p-progressBar aria-labelledby="ticket_progress" [showValue]="false" [value]="(engineerRemarkAndKPI.workloadKPI / KPI_DISTRIBUTION.WORKLOAD) * 100" [style]="{ height: '3.5px' }"></p-progressBar>
+        </div>
+        <div class="col-12 col-sm-6">
+          <div class="d-flex justify-content-between">
+              <span id="ticket_progress" class="text-gray-400">Fixed Ticket ({{ engineerRemarkAndKPI.fixedTicketKPI }}%)</span>
+              <span class="text-gray-400">{{ KPI_DISTRIBUTION.FIXED_TICKET }}%</span>
+          </div>
+          <p-progressBar aria-labelledby="ticket_progress" [showValue]="false" [value]="(engineerRemarkAndKPI.fixedTicketKPI / KPI_DISTRIBUTION.FIXED_TICKET) * 100 " [style]="{ height: '3.5px' }"></p-progressBar>
+        </div>
+        <div class="col-12 col-sm-6">
+          <div class="d-flex justify-content-between">
+              <span id="ticket_progress" class="text-gray-400">On-Time Task ({{ engineerRemarkAndKPI.onTimeTaskKPI }}%)<span *ngIf="engineerRemarkAndKPI.numOfEarlyTaskCompletion" class="low-font-color">+{{ engineerRemarkAndKPI.numOfEarlyTaskCompletion }}</span><span *ngIf="engineerRemarkAndKPI.numOfLateTask" class="high-font-color">-{{ engineerRemarkAndKPI.numOfLateTask}}</span></span>
+              <span class="text-gray-400">{{ KPI_DISTRIBUTION.ON_TIME_TASK }}%</span>
+          </div>
+          <p-progressBar aria-labelledby="ticket_progress" [showValue]="false" [value]="(engineerRemarkAndKPI.onTimeTaskKPI / KPI_DISTRIBUTION.ON_TIME_TASK) * 100" [style]="{ height: '3.5px' }"></p-progressBar>
+        </div>
+        <div class="col-12 col-sm-6">
+          <div class="d-flex justify-content-between">
+              <span id="ticket_progress" class="text-gray-400">On-Time Ticket ({{ engineerRemarkAndKPI.onTimeTicketKPI }}%)<span *ngIf="engineerRemarkAndKPI.numOfEarlyTicketResolution" class="low-font-color">+{{ engineerRemarkAndKPI.numOfEarlyTicketResolution }}</span><span *ngIf="engineerRemarkAndKPI.numOfLateTicket" class="high-font-color">-{{ engineerRemarkAndKPI.numOfLateTicket}}</span></span>
+              <span class="text-gray-400">{{ KPI_DISTRIBUTION.ON_TIME_TICKET }}%</span>
+          </div>
+          <p-progressBar aria-labelledby="ticket_progress" [showValue]="false" [value]="(engineerRemarkAndKPI.onTimeTicketKPI / KPI_DISTRIBUTION.ON_TIME_TICKET) * 100" [style]="{ height: '3.5px' }"></p-progressBar>
+        </div>
+        <!-- Check for Early & Late Task and Ticket -->
+        <div *ngIf="engineerRemarkAndKPI.numOfEarlyTaskCompletion || engineerRemarkAndKPI.numOfEarlyTicketResolution || engineerRemarkAndKPI.numOfLateTask || engineerRemarkAndKPI.numOfLateTicket" class="col-12 py-3">
+          <div class="d-flex flex-column">
+            <span class="fs-7 fw-bold low-font-color" *ngIf="engineerRemarkAndKPI.numOfEarlyTaskCompletion"><i class="fs-7 fw-bold low-font-color bi bi-calendar2-check-fill me-2"></i>Completed Task(s) of Future Month(s): {{engineerRemarkAndKPI.numOfEarlyTaskCompletion}}</span>
+            <span class="fs-7 fw-bold low-font-color" *ngIf="engineerRemarkAndKPI.numOfEarlyTicketResolution"><i class="fs-7 fw-bold low-font-color bi bi-bug-fill me-2"></i>Resolved Ticket(s) of Future Month(s): {{engineerRemarkAndKPI.numOfEarlyTicketResolution}}</span>
+            <span class="fs-7 fw-bold high-font-color" *ngIf="engineerRemarkAndKPI.numOfLateTask"><i class="fs-7 fw-bold high-font-color bi bi-alarm-fill me-2"></i>Previous Month Late Task: {{engineerRemarkAndKPI.numOfLateTask}}</span>
+            <span class="fs-7 fw-bold high-font-color" *ngIf="engineerRemarkAndKPI.numOfLateTicket"><i class="fs-7 fw-bold high-font-color bi bi-alarm-fill me-2"></i>Previous Month Late Ticket: {{engineerRemarkAndKPI.numOfLateTicket}}</span>  
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr *ngIf="isMobile"/>
+    <div class="col-12 col-sm-6 align-self-center">
+      <div class="d-flex flex-column align-items-center">
+        <div class="fs-5 text-gray-800 fw-bolder">Overall Performance</div>
+        <div #chartRef_4 class="mixed-widget-4-chart" [style.height]="chartHeight">
+          <apx-chart
+            [series]="chartOptions.series"
+            [chart]="chartOptions.chart"
+            [xaxis]="chartOptions.xaxis"
+            [yaxis]="chartOptions.yaxis"
+            [dataLabels]="chartOptions.dataLabels"
+            [stroke]="chartOptions.stroke"
+            [legend]="chartOptions.legend"
+            [fill]="chartOptions.fill"
+            [states]="chartOptions.states"
+            [tooltip]="chartOptions.tooltip"
+            [colors]="chartOptions.colors"
+            [markers]="chartOptions.markers"
+            [plotOptions]="chartOptions.plotOptions"
+          ></apx-chart>
+        </div>
+        <div class="d-flex flex-column align-items-center">
+          <p-rating [(ngModel)]="performanceRating" [stars]="4" [readonly]="true" [cancel]="false"></p-rating>
+          <span class="fs-5 text-gray-800 fw-bolder">{{ PERFORMANCE_RATING[performanceRating.toString()] }}</span>
+        </div>
+      </div>
+  </div>
+  <!-- Display the buttons from the parent component -->
+  <ng-content></ng-content>
+</div>
+
+

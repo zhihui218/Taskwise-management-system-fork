@@ -1,0 +1,103 @@
+<div class="card border border-2 border-gray-300 border-hover">
+    <div class="card-header border-0 pt-9">
+        <div class="card-title m-0">
+            <div class="symbol symbol-50px w-50px bg-light">
+                <img [src]="icon" alt="card2" class="p-3" />
+            </div>
+            <div *ngIf="isToday || isOverdue" class="ms-5 position-relative d-flex align-items-center">
+                <div class="me-4">
+                    <i [ngStyle]="isToday ? { 'color': 'var(--bs-primary)' } : { 'color': 'var(--bs-danger)' }" class="bi bi-alarm-fill"></i>
+                    <i [ngStyle]="isToday ? { 'color': 'var(--bs-primary)' } : { 'color': 'var(--bs-danger)' }" class="bi bi-exclamation position-absolute"></i>
+                </div>
+                <span [ngClass]="isToday ? 'today-style' : 'overdue-style'" class="badge fw-bolder px-4 py-3">{{ isToday ? 'Today' : 'Overdue'}}</span>
+            </div>
+        </div>
+
+        <div class="card-toolbar">
+            <span 
+            [ngClass]="status == 'Completed' ? 'completed-style' : status == 'Pending' ? 'pending-style' : 'onHold-style'"
+            class="badge fw-bolder me-auto px-4 py-3">
+                {{ status }}
+            </span>
+        </div>
+    </div>
+
+    <div class="card-body p-9">
+        <div class="fs-3 fw-bolder text-dark text-truncate">{{ title }}</div>
+
+        <p class="text-gray-400 fw-bold fs-5 mt-1 mb-7 text-truncate">{{ description }}</p>
+
+        <div class="d-flex flex-wrap mb-5">
+            <div class="
+            border border-gray-300 border-dashed
+            rounded
+            min-w-125px
+            py-3
+            px-4
+            me-7
+            mb-3
+            ">
+                <div class="fs-6 text-gray-800 fw-bolder">{{ date }}</div>
+                <div class="fw-bold text-gray-400">Due Date</div>
+            </div>
+
+            <div class="
+        border border-gray-300 border-dashed
+        rounded
+        min-w-125px
+        py-3
+        px-4
+        mb-3
+        ">
+                <div 
+                [ngClass]="budget == 'Low' ? 'low-font-color' : budget == 'Medium' ? 'medium-font-color' : 'high-font-color' "
+                class="fs-6 text-gray-800 fw-bolder">{{ budget }}</div>
+                <div class="fw-bold text-gray-400">Priority</div>
+            </div>
+        </div>
+        <!-- Display progress of a project -->
+        <!-- <div *ngIf="list_type == 'Project'" class="w-100 mb-5">
+            <div class="mb-4">
+                <div class="d-flex justify-content-between">
+                    <span id="task_progress" class="text-gray-400">Task Progress</span>
+                    <span class="text-gray-400">{{ task_progress.counts == 0 ? 'No task is created' : task_progress.progress + '%' }}</span>
+                </div>
+                <p-progressBar aria-labelledby="task_progress" [showValue]="false" [value]="task_progress.counts == 0 ? 100 : task_progress.progress" [style]="{ height: '3.5px' }"></p-progressBar>
+            </div>
+            <div class="mb-4">
+                <div class="d-flex justify-content-between">
+                    <span id="ticket_progress" class="text-gray-400">Ticket Progress</span>
+                    <span class="text-gray-400">{{ ticket_progress.counts == 0 ? 'No issue ticket' : ticket_progress.progress + '%' }}</span>
+                </div>
+                <p-progressBar aria-labelledby="ticket_progress" [showValue]="false" [value]="ticket_progress.counts == 0 ? 100 : ticket_progress.progress" [style]="{ height: '3.5px' }"></p-progressBar>
+            </div>
+        </div> -->
+
+        <ng-container *ngIf="list_type == 'Project'">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-card-checklist main-color" style="font-size: 1.5rem"></i>
+                <span class="main-color ms-2 me-3">:</span>
+                <div class="text-gray-400">{{ numOfTask ? numOfTask : 'No' }} Task{{ numOfTask > 1 ? 's' : ''}}</div>
+            </div>
+        </ng-container>
+
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-ticket main-color" style="font-size: 1.5rem"></i>
+                <span class="main-color ms-2 me-3">:</span>
+                <div class="text-gray-400">{{ numOfTicket ? numOfTicket : 'No' }} Issue Ticket{{ numOfTicket > 1 ? 's' : ''}} Found</div>
+            </div>
+
+        <!-- <div class="d-flex align-items-center mb-3">
+            <span class="pi pi-users main-color" style="font-size: 1.5rem"></span>
+            <span class="main-color ms-2 me-3">:</span>
+            <div class="text-gray-400">{{ numOfEngineer }} Participant{{ numOfEngineer > 1 ? 's' : ''}}</div>
+        </div> -->
+
+        <!-- <div class="d-flex align-items-center">
+            <span class="pi pi-chevron-circle-down me-3"></span>
+            <div class="text-gray-400">No. Task: </div>
+        </div> -->
+
+        <app-user-list [users]="users"></app-user-list>
+    </div>
+</div>

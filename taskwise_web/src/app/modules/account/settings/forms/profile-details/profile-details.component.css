@@ -1,0 +1,9 @@
+.upload_icon_border {
+  background-color: rgba(251, 183, 9, 0.9450980392);
+  display: flex;
+  padding: 5px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}/*# sourceMappingURL=profile-details.component.css.map */

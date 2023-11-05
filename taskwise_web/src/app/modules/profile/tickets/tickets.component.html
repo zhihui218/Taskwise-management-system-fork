@@ -1,0 +1,41 @@
+<div class="d-flex flex-wrap flex-stack mb-6">
+    <h3 class="fw-bolder my-2">
+        Recent Tickets
+        <span class="fs-6 text-gray-400 fw-bold ms-1">{{ selectedStatus }}</span>
+    </h3>
+
+    <div class="d-flex flex-wrap my-2">
+        <div class="me-4">
+            <select name="status" data-control="select2" data-hide-search="true" class="form-select form-select-sm form-select-white w-125px" [(ngModel)]="selectedStatus" (ngModelChange)="sortTicketByStatus($event)">
+                <option value="All">All</option>
+                <option [value]="TICKET_STATUS.PENDING">{{ TICKET_STATUS.PENDING }}</option>
+                <option [value]="TICKET_STATUS.REOPENED">{{ TICKET_STATUS.REOPENED }}</option>
+                <option [value]="TICKET_STATUS.SOLVED">{{ TICKET_STATUS.SOLVED }}</option>
+            </select>
+        </div>
+        <!-- data-bs-toggle="modal" data-bs-target="#kt_modal_create_project" -->
+        <a *ngIf="isClient()" (click)="openTicketForm()" class="btn btn-primary btn-sm cursor-pointer">New Ticket</a>
+    </div>
+</div>
+
+<div class="row g-6 g-xl-9 position-relative">
+    <ng-container *ngIf="(isLoadingTic$ | async) || isLoadingPro || (isLoadingUser$ | async)">
+        <div class="loading-page">
+            <div class="loader"></div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!(isLoadingTic$ | async) && !isLoadingPro && !(isLoadingUser$ | async)">
+        <ng-container *ngIf="displayedTickets.length == 0">
+            <span class="d-flex justify-content-center fs-2 text-gray-400 fw-bold ms-1">No matched ticket is found</span>
+        </ng-container>
+        <ng-container *ngIf="displayedTickets.length > 0">
+            <div *ngFor="let ticket of displayedTickets" class="col-md-6 translate_y pointer-cursor">
+                <app-ticket-card (click)="displayDetails(ticket)" [ticket]="ticket" [isClient]="isClient()"></app-ticket-card> 
+            </div>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="pagination">
+        <!-- first => Determine the 1st index of element in current page to render the correct `page` & `page number` -->
+        <p-paginator (onPageChange)="onPageChange($event)" [showCurrentPageReport]="true" [rows]="4" [first]="(page - 1) * limit" [totalRecords]="pagination.numOfDocs" [rowsPerPageOptions]="[4,6,10]"></p-paginator>
+    </ng-container>
+</div>

@@ -1,0 +1,279 @@
+<div class="card mb-5 mb-xl-10" id="kt_profile_details_view">
+  <ng-container *ngIf="user$ | async as _user">
+
+  <div class="card-header cursor-pointer">
+    <div class="card-title m-0">
+      <h3 class="fw-bolder m-0">Profile Details</h3>
+    </div>
+
+    <a routerLink="/crafted/account/settings" class="btn btn-primary align-self-center">
+      Edit Profile
+    </a>
+  </div>
+
+  <div class="card-body p-9">
+    <div class="row mb-7">
+      <label class="col-lg-4 fw-bold text-muted">Name</label>
+
+      <div class="col-lg-8">
+        <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+      </div>
+    </div>
+
+    <div class="row mb-7">
+      <label class="col-lg-4 fw-bold text-muted">
+        Contact Phone
+        <i class="fas fa-exclamation-circle ms-1 fs-7" pToolTip="Phone number must be active"></i>
+      </label>
+      <div class="col-lg-8 d-flex align-items-center">
+        <span class="fw-bolder fs-6 me-2">{{_user.phone}}</span>
+        <span class="badge badge-success">Verified</span>
+      </div>
+    </div>
+    <!-- For "Engineer" -->
+    <ng-container *ngIf="_user.role == ROLE.ENGINEER">
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Joining Date</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{ _user?.joining_date | date:'d MMMM yyyy' }}</span>
+        </div>
+      </div>
+
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Age</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.Age}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Gender</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.Gender}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Education Background</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.EducationBackground}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Marital Status</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.MaritalStatus}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Distance From Home</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.DistanceFromHome}} KM</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Education Level</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.EmpEducationLevel}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Environment Satisfaction Level</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.EmpEnvironmentSatisfaction}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Job Satisfaction Level</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.EmpJobSatisfaction}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Number of Companies Worked</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.NumCompaniesWorked}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Overtime</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.OverTime}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Relationship Satisfaction Level</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.EmpRelationshipSatisfaction}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Total Working Experience</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.TotalWorkExperienceInYears}} year(s)</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Worklife Balance</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.EmpWorkLifeBalance}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Experience Years In This Company</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{ DateFormatter.calculateYearOfExperience(_user.joining_date) }} year(s)</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Experience Years In Current Role</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.ExperienceYearsInCurrentRole}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Attrition</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.Attrition}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Years Since Last Promotion</label>
+
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user?.YearsSinceLastPromotion || 'N/A'}}</span>
+        </div>
+      </div>
+      <!--
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div>
+  
+      <div class="row mb-7">
+        <label class="col-lg-4 fw-bold text-muted">Name</label>
+  
+        <div class="col-lg-8">
+          <span class="fw-bolder fs-6 text-dark">{{_user.name}}</span>
+        </div>
+      </div> -->
+    </ng-container>
+
+    <!-- <div class="row mb-10">
+      <label class="col-lg-4 fw-bold text-muted">Password</label>
+
+      <div class="col-lg-8">
+        <span class="fw-bold fs-6">*******</span>
+      </div>
+    </div> -->
+
+  </div>
+</ng-container>
+</div>

@@ -1,0 +1,13 @@
+.horizontal-line{
+    border-top: 1px solid var(--bs-text-muted);
+    flex-grow: 1;
+}
+
+.chat-down-btn{
+    height: 50px; 
+    width: 50px; 
+    background-color: rgb(247,247,247, 0.8); 
+    z-index: 999; 
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; 
+    border-radius: 10px;
+}

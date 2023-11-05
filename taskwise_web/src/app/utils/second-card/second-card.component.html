@@ -1,0 +1,8 @@
+<p-skeleton *ngIf="!count" styleClass="px-6 py-8 rounded-2 mb-7 card "></p-skeleton>
+<div *ngIf="count" class="px-6 py-8 rounded-2 mb-7 card bgi-no-repeat" style="background-position: right top; background-size: 30%; background-image: url(&quot;./assets/media/svg/shapes/abstract-4.svg&quot;);">
+    <i [ngClass]="user_type == ROLE.ENGINEER ? 'bi-people-fill' : 'bi-person-circle'" class="bi mb-2 icon-color" style="font-size: 4rem"></i>
+    <div class="py-1">
+        <span class="text-dark fs-1 fw-bolder me-2">{{ count }}</span>
+        <span class="fw-bold text-muted fs-6">{{ user_type == ROLE.ENGINEER ? 'Engineers' : 'Clients'}}</span>
+    </div>
+</div>
