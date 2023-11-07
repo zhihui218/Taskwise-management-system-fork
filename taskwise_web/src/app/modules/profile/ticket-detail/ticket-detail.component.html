@@ -237,8 +237,6 @@
 </div>
 
 <p-overlayPanel #op
-(onShow)="enterChatRoom()"
-(onHide)="leaveChatRoom()"
 [style]="getOverlayChatWidth()">
     <app-messenger-drawer *ngIf="ticket && ticket?.client && !authService.isManager()"
     [contactPerson]="isClient ? ticket.selectedLeader : ticket.client"

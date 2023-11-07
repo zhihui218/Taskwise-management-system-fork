@@ -14,7 +14,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 //? Required for issue ticket report generation
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { RealTimeService } from 'src/app/Services/real-time.service';
 import { ToastAlertService } from 'src/app/Services/toast-alert.service';
 
 @Component({
@@ -59,7 +58,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy{
     private ticketService: TicketService,
     private ToastService: ToastAlertService,
     private userService: UserService,
-    private RealTimeService: RealTimeService,
     private fb: FormBuilder,
     private datePipe: DatePipe
   )
@@ -206,15 +204,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy{
 
   toggleEditMode(): void { this.isEditMode = !this.isEditMode; }
 
-  enterChatRoom(): void{
-    this.RealTimeService.enterChatRoom(this.authService.currentUserValue._id, this.ticket._id);
-  }
-
-  leaveChatRoom(): void{
-    this.RealTimeService.leaveChatRoom(this.authService.currentUserValue._id);
-  }
-
-  ngOnDestroy(): void { this.leaveChatRoom(); }
+  ngOnDestroy(): void { }
 
   //? Generate an issue ticket report regardless of its status
   async generateTicketReport(): Promise<void>{

@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 import { AuthService, UserModel } from 'src/app/modules/auth';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { UpdateUserDetailComponent } from 'src/app/form-modal/update-user-detail/update-user-detail.component';
-import { RealTimeService } from 'src/app/Services/real-time.service';
 
 @Component({
   selector: 'app-layout',
@@ -59,7 +58,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     private initService: LayoutInitService,
     private layout: LayoutService,
     private authService: AuthService,
-    private RealTimeService: RealTimeService,
     public dialogService: DialogService,
     
   ) {
@@ -83,7 +81,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     this.user$ = this.authService.currentUserSubject.asObservable();
     this.user$.subscribe((user: UserModel) => 
     {
-      if(user) this.RealTimeService.registerActiveUser(user.name, user._id);
       if(user && user.firstLogin) this.showDialog(user);
     })
   }

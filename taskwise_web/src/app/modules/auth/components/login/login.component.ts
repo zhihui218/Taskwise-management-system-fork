@@ -5,7 +5,6 @@ import { first } from 'rxjs/operators';
 import { UserModel } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RealTimeService } from 'src/app/Services/real-time.service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +23,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private RealTimeService: RealTimeService,
     private route: ActivatedRoute,
     private router: Router
   ) {

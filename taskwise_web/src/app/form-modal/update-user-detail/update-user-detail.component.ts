@@ -1,10 +1,9 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService, UserPostDTO } from 'src/app/modules/auth';
 import { Utils } from 'src/app/utils/FileConverter';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { MatchPassword } from 'src/app/utils/validator';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ToastAlertService } from 'src/app/Services/toast-alert.service';
 
@@ -48,25 +47,20 @@ export class UpdateUserDetailComponent implements OnInit, OnDestroy {
     this.detailsForm = this.fb.group({
       name: [
         this.name,
-        Validators.compose([Validators.required])
       ],
       phone: [
         '',
-        Validators.compose([Validators.required])
       ],
       profile:[
         '',
-        Validators.compose([Validators.required])
       ],
       password: [
         '',
-        Validators.compose([Validators.required])
       ],
       confirmPassword: [
         '',
-        Validators.compose([Validators.required])
       ]
-    }, { validator: MatchPassword()})
+    })
   }
 
   toggleShowPassword(){

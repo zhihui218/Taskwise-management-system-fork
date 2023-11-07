@@ -8,7 +8,6 @@ import { locale as jpLang } from './modules/i18n/vocabs/jp';
 import { locale as deLang } from './modules/i18n/vocabs/de';
 import { locale as frLang } from './modules/i18n/vocabs/fr';
 import { ThemeModeService } from './_metronic/partials/layout/theme-mode-switcher/theme-mode.service';
-import { RealTimeService } from './Services/real-time.service';
 import { MessageService } from 'primeng/api';
 import { ChatDTO } from './DTOs/ChatDTO';
 import { AuthService } from './modules/auth';
@@ -35,7 +34,6 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     private translationService: TranslationService,
     private modeService: ThemeModeService,
-    private RealTimeService: RealTimeService,
     private MessageService: MessageService,
     private ToastService: ToastAlertService,
     private AuthService: AuthService,
@@ -54,13 +52,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   
   ngOnInit() {
-    //? Chat Notification for user
-    const subscription = this.RealTimeService.onMessageReceived().subscribe((data: ChatDTO | undefined) => {
-      this.ticket_id = data.ticket_id;
-      if(!this.isOnSpecificPage(this.ticket_id) && this.AuthService.currentUserValue._id == data.receiver_id){
-        this.ToastService.invokeToastAlert('info', 'Ticket Chat','Receive a new message from client','chat-notification');
-      }
-    });
     //? Check Wi-Fi connection constantly
     this.isWifiConnected$ = this.NetworkConnectionService.checkConnection();
     //? Display success / failure message conditionally based on API result
@@ -69,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.showToastMessage(api_result);
     });
 
-    this.subscription.push(subscription, subscription_2);
+    this.subscription.push(subscription_2);
     this.modeService.init();
   }
 

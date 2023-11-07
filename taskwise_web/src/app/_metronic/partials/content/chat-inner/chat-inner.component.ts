@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import { ChatDTO, ChatDeleteDTO, ChatPaginateDTO } from 'src/app/DTOs/ChatDTO';
 import { AuthService, UserGetDTO } from 'src/app/modules/auth';
 import { ChatService } from 'src/app/Services/chat.service';
-import { RealTimeService } from 'src/app/Services/real-time.service';
 import { DateFormatter } from 'src/app/utils/DateConverter';
 import { ConfirmationService } from 'primeng/api';
 import { ToastAlertService } from 'src/app/Services/toast-alert.service';
@@ -37,7 +36,6 @@ export class ChatInnerComponent implements OnInit {
   @Input() ticket_id: string;
 
   constructor(
-    private RealTimeService: RealTimeService,
     public AuthService: AuthService,
     private ChatService: ChatService,
     private ConfirmationService: ConfirmationService,
@@ -50,14 +48,6 @@ export class ChatInnerComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     //? Load the chat history
     await this.loadChatHistory();
-    //? Allow the user to receive real-time chat from "Client" / "Engineer"
-    this.RealTimeService.onMessageReceived().subscribe((message: ChatDTO) => {
-      //! Avoid displaying the message if it's sent from other user
-      if(message.ticket_id == this.ticket_id){
-        this.chat_history.push(message); this.cdr.detectChanges();
-        if(this.isDisableScrollBottom) this.chat_container.nativeElement.scrollTop = this.chat_container.nativeElement.scrollHeight;}
-        }
-      );
   }
 
   async loadChatHistory(): Promise<void>{
@@ -105,7 +95,6 @@ export class ChatInnerComponent implements OnInit {
         ticket_id: this.ticket_id,
         message: this.message,
       }
-      this.RealTimeService.sendMessage(newChat);
       newChat.createdAt = new Date().toISOString();
       this.chat_history.push(newChat);
       //? Move the the bottom of chat when a message is sent
