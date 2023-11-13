@@ -91,7 +91,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
       { 
         header: 'Fill in Personal Details',
         width: "60%",
-        closable: false,
         data: {
           _id: user._id,
           name: user.name
