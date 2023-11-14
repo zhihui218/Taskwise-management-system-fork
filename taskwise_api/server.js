@@ -3,7 +3,6 @@ const socketIO = require('socket.io');
 let io;
 let online_user = [];
 const UserService = require("./services/user.service");
-const ChatService = require("./services/chat.service");
 const { transformUnreadChat, notificationTransform } = require("./utils/helper");
 
 //? Add a user when he / she is online
@@ -46,45 +45,6 @@ module.exports = {
                 socket.broadcast.emit('userOnline', user_id);
                 //? Broadcast the list of "online" user
                 socket.emit('onlineUser', online_user.map(user => ({ name: user.name, _id: user._id })));
-            });
-
-            //? Invoked when a message is sent from frontend (sender -> recipient)
-            socket.on('sendMessage', async({ message, to, from, ticket_id }) => {
-                try{
-                    let isRead = false; const userOnline = isUserOnline(to);
-                    //* 1. IF the user is in the current chat (open the chat), mark all the subsequent message as read automatically
-                    if(userOnline && getUser(to).chatRoom == ticket_id) isRead = true;
-                    //* 2 Store the chat in the database (retrieved in the future)
-                    const chat = await ChatService.insertChatToDB(from, to, message, ticket_id, isRead);
-                    //* 3. Emit the message from the `sender` to `recipient` if the `recipient` is currently online
-                    if(userOnline) io.to(getUser(to).socket_id).emit('receiveMessage', chat);
-                    //* 4. IF the user is online but not in the chat, we should append it to the `chat-history` at the frontend
-                    if(userOnline && getUser(to).chatRoom != ticket_id){ 
-                        const chat_history = await transformUnreadChat(chat.sender_id, chat.ticket_id, 1);
-                        io.to(getUser(to).socket_id).emit('chatHistory', chat_history);
-                    }
-                }catch(error){
-                    console.error("error: ", error)
-                }
-            });
-
-            //? Invoked when the user open & enter a chat
-            socket.on('enterChat', async({ user_id, ticket_id }) =>{
-                try{
-                    if(isUserOnline(user_id)){
-                        getUser(user_id).chatRoom = ticket_id;
-                        await ChatService.markChatAsRead(ticket_id, user_id);
-                        //? Let the frontend to clear the `chat notification` from the `chat_history` where the ticket_id == ticket that is read
-                        io.to(getUser(user_id).socket_id).emit('removeChat', ticket_id);
-                    }
-                }catch(error){ console.error("error: ", error); }
-            });
-
-            //? Invoked when the user close a chat / navigate from `ticket-details` page to another page
-            socket.on('leaveChat', async({ user_id }) =>{
-                try{
-                    if(isUserOnline(user_id)) getUser(user_id).chatRoom = '';                   
-                }catch(error){ console.error("error: ", error); }
             });
 
             //? Remove the user when his token expired / logout
