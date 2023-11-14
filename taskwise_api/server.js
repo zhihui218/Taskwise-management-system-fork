@@ -3,7 +3,7 @@ const socketIO = require('socket.io');
 let io;
 let online_user = [];
 const UserService = require("./services/user.service");
-const { transformUnreadChat, notificationTransform } = require("./utils/helper");
+const { notificationTransform } = require("./utils/helper");
 
 //? Add a user when he / she is online
 const addNewUser = (username, user_id, socket_id) => {
