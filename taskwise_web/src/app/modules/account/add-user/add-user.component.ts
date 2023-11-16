@@ -5,6 +5,7 @@ import { AuthService } from '../../auth';
 import { MessageService } from 'primeng/api';
 import { ROLE } from 'src/app/utils/const';
 import { ToastAlertService } from 'src/app/Services/toast-alert.service';
+import { noWhitespaceValidator } from 'src/app/utils/validator';
 
 @Component({
   selector: 'app-add-user',
@@ -47,7 +48,11 @@ export class AddUserComponent implements OnInit, OnDestroy {
       ],
       name: [
         '',
-        Validators.compose([Validators.required])
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(100), //https://stackoverflow.com/questions/30485/what-is-a-reasonable-length-limit-on-person-name-fields
+          noWhitespaceValidator,
+        ])
       ],
       email: [
         '',
@@ -67,7 +72,12 @@ export class AddUserComponent implements OnInit, OnDestroy {
         ]),
       ],
       joining_date: [''],
-      company_name: ['']
+      company_name: [
+        '',
+        Validators.compose([
+          noWhitespaceValidator,
+        ])
+      ]
     });
 
     this.onRoleChange();
