@@ -21,9 +21,9 @@ router.get('/allTasks', taskController.getAllTask);
 //* Paginate tasks for "Project" page
 router.get('/paginate', [ taskController.paginateTask, middleware.countNumOfTicket ]);
 //* Get task of a specific "ENGINEER"
-router.get('/paginate/:_id', [ middleware.checkRole, taskController.paginateTask, middleware.countNumOfTicket ]);
+router.get('/paginate/:_id', [ taskController.paginateTask, middleware.countNumOfTicket ]);
 //For flutter temp
-router.get('/paginate/:_id', [ middleware.checkRole,taskController.paginateTask, middleware.countNumOfTicket ]);
+router.get('/paginate/:_id', [ taskController.paginateTask, middleware.countNumOfTicket ]);
 
 //* Get task of a specific project in "Project-Details" page
 router.get('/taskOfProjectPaginate/:_id', [ taskController.paginateTask, middleware.countNumOfTicket ]);

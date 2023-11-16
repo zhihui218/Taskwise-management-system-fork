@@ -12,12 +12,12 @@ router.get('/allTickets',TicketController.getAllTicket);
 router.get('/getTicket/:id', TicketController.getTicketById, middleware.getTaskNameAndLeader);
 
 //* Get tickets when user.role == "MANAGER"
-router.get('/getTickets', [ middleware.isAuthorized, middleware.checkRole, TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
+router.get('/getTickets', [ TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
 //* Get tickets of a specific "CLIENT || ENGINEER"
-router.get('/getTickets/:user_id', [ middleware.isAuthorized, middleware.checkRole, TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
+router.get('/getTickets/:user_id', [ TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
 //* Get tickets of a specific task / project
-router.get('/getTicketsOfTask/:task_id', [ middleware.isAuthorized, TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
-router.get('/getTicketsOfProject/:project_id', [ middleware.isAuthorized, TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
+router.get('/getTicketsOfTask/:task_id', [ TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
+router.get('/getTicketsOfProject/:project_id', [ TicketController.paginateTicket, middleware.getTaskNameAndLeader ]);
 
 //* Get all the tickets of a specific project
 router.get('/getProjectTickets/:projectId', TicketController.getTicketByProject);

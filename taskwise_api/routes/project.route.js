@@ -30,11 +30,11 @@ router.get('/getProject/:projectId', [ projectController.getProjectById, middlew
 router.get('/allProjects', projectController.getAllProject);
 
 //* Get projects when user.role == "MANAGER"
-router.get('/paginate', [ middleware.isAuthorized, middleware.checkRole ], projectController.paginateProject);
+router.get('/paginate', projectController.paginateProject);
 //* Get projects of a specific "CLIENT || ENGINEER"
-router.get('/paginate/:user_id', [ middleware.isAuthorized, middleware.checkRole ], projectController.paginateProject);
+router.get('/paginate/:user_id', projectController.paginateProject);
 //* "MANAGER" view the list of projects of a "CLIENT"
-router.get('/viewClientProject/:user_id', [ middleware.isAuthorized, projectController.paginateProject ]);
+router.get('/viewClientProject/:user_id', [ projectController.paginateProject ]);
 
 router.get('/projectsForTask', projectController.getProjectsForTaskSelection);
 
