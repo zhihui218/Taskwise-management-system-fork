@@ -14,8 +14,32 @@ const { transformUnreadChat, getWorkingHourPerMonth, transformToFixedDouble } = 
 require('dotenv').config()
 
 
-
 // MIDDLEWARE
+exports.isAuthorized = (req, res, next) => {
+    // Header names in Express are auto-converted to 'lowercase' (from `HttpInterceptors` of frontend)
+    let token = req.headers['x-access-token'] || req.headers['authorization'];
+
+    // Remove Bearer from string
+    token = token.replace(/^Bearer\s+/, "");
+
+    if (token) {
+        jwt.verify(token, 'secretKey', (err, decoded) => 
+        {
+            if (err) {
+                // Unauthorized access is blocked and returned to the frontend
+                return res.status(401).json({ message: "Unauthorized Access Found" });
+            }
+            // The token is valid and safe (Append the `user role` through this middleware)
+            req.user = decoded.user;
+            //? next() => Move on to the next middleware to process the request
+            next();
+        });
+    } 
+    else {
+        return res.status(401).json({ message: "Session Expired. Please Login Again." });
+    }
+}
+
 exports.checkResetPasswordLinkActive = async(req, res, next) => {
     try{
         const jwtToken = req.params.token;
