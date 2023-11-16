@@ -21,11 +21,24 @@ export function isJoiningDateRequired(): ValidatorFn{
     }
 }
 
+export const noNegativeTimeValidator: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
+    const days = control.get('day').value;
+    const hours = control.get('hour').value;
+    const minutes = control.get('minute').value;
+    return days >= 0 && hours >= 0 && minutes >= 0 ? null : { 'negativeTimeValue': true };
+};
 
 export const atLeastOneFieldValidator: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
     const days = control.get('day').value;
     const hours = control.get('hour').value;
     const minutes = control.get('minute').value;
-
     return days || hours || minutes ? null : { 'atLeastOneRequired': true };
 };
+
+//? Customized to check for ONLY ONE field each time
+// Custom validator for checking if the name contains only whitespace
+export function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+    if((control.value || '').length == 0) return null;
+    const ContainsWhiteSpaceOnly = (control.value || '').trim().length === 0;
+    return ContainsWhiteSpaceOnly ? { 'ContainsWhiteSpaceOnly': true } : null;
+}
