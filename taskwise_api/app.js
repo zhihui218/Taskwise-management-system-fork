@@ -23,6 +23,8 @@ const { job } = require('./utils/job-schedule');
 
 var corsOptions = { origin: true };
 
+// imports isAuthorized function from the './utils/middleware' module
+const { isAuthorized } = require('./utils/middleware');
 
 // Middleware
 app.use(cors(corsOptions));
