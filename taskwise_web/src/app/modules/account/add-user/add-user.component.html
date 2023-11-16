@@ -23,7 +23,12 @@
                 <div *ngIf="userRole == ROLE.CLIENT" class="row mb-6">
                     <label class="col-lg-4 col-form-label fw-bold fs-6">Company</label>
                     <div class="col-lg-8 fv-row">
-                        <input formControlName="company_name" type="text" class="form-control form-control-lg form-control-solid" placeholder="Please enter company / organization name" name="email"/>
+                        <input formControlName="company_name" type="text"
+                            class="form-control form-control-lg form-control-solid"
+                            placeholder="Please enter company / organization name" name="email" />
+                        <span
+                            *ngIf="addUserForm.dirty && addUserForm.get('company_name').hasError('ContainsWhiteSpaceOnly')"
+                            class="error_message">*Should not contain whitespace only</span>
                     </div>
                 </div>
                 <div class="row mb-6">
@@ -35,7 +40,11 @@
                 <div class="row mb-6">
                     <label class="col-lg-4 col-form-label required fw-bold fs-6">Name</label>
                     <div class="col-lg-8 fv-row">
-                        <input formControlName="name" type="text" class="form-control form-control-lg form-control-solid" placeholder="Please enter name..." name="name" />
+                        <input formControlName="name" type="text"
+                            class="form-control form-control-lg form-control-solid" placeholder="Please enter name..."
+                            name="name" />
+                        <span *ngIf="addUserForm.dirty && addUserForm.get('name').hasError('ContainsWhiteSpaceOnly')"
+                            class="error_message">*Should not contain whitespace only</span>
                     </div>
                 </div>
                 <!-- Select Joining Date of the Engineer -->
