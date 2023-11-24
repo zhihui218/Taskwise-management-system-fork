@@ -137,10 +137,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  showNotificationArrival(): void{
-
-  }
-
   //? Check whether to update the `notification` "isRead"
   private async updateNotificationAsRead(index: number): Promise<boolean>{
     //? Go the API only if the notification is not read
