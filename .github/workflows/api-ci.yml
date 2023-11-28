@@ -1,0 +1,43 @@
+name: API Continuous Integration
+
+on:
+  push:
+    branches: 
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+    paths:
+      - 'taskwise_api/**'
+  pull_request:
+    branches:
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+    paths:
+      - 'taskwise_api/**'
+
+jobs:
+  build-and-test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18' 
+
+    - name: Install API dependencies
+      run: npm install
+      working-directory: taskwise_api
+
+    - name: Run API tests
+      run: npm test
+      working-directory: taskwise_api
