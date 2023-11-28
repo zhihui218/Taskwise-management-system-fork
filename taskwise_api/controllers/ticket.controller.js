@@ -2,7 +2,9 @@ const TicketService = require("../services/ticket.service");
 const FileController = require('../utils/file.controller');
 const ChatController = require('../controllers/chat.controller');
 const NotificationController = require('../controllers/notification.controller');
-const { type, notification_type, ticket_status } = require('../constants');
+// ADD THIS LINE
+const Decorator = require("../utils/decorator");
+const { type, notification_type, ticket_status, roles } = require('../constants');
 
 exports.createTicket = async(req, res, next) => {
 
@@ -52,6 +54,7 @@ exports.getAllTicket = async(req, res, next) => {
     }
 }
 
+// ADD DECORATORS
 exports.getTicketById = async(req, res, next) => {
 
     try {
@@ -59,12 +62,14 @@ exports.getTicketById = async(req, res, next) => {
         const ticket_id = req.params.id;
 
         const ticket = await TicketService.getTicketById(ticket_id);
+        if(!ticket){
+            res.status(400).json(undefined);
+        }
+        else{
+            let decorated = await ticketDecorator(req.user.role, ticket);
 
-        //? Get task's name and ticket's leader details
-        req.ticket = ticket;
-
-        next();
-
+            res.status(200).json(decorated);
+        }
     } catch (error) {
 
         res.status(500).json(undefined);
@@ -73,45 +78,106 @@ exports.getTicketById = async(req, res, next) => {
     }
 }
 
+// ADD DECORATORS && ROLE-BASED ACCESS
 exports.paginateTicket = async(req, res, next) => {
 
     try{
-
         //* Pagination
-        const page = parseInt(req.query.page);
-        const limit = parseInt(req.query.limit);
-
-        const startIndex = (page - 1)* limit;
-        const endIndex = page * limit;
+        const { page, limit, startIndex, endIndex } = paginationDetails(req);
 
         let numOfDocs; let ticketPaginate;
-
-        //? The user is accessing the ticket list of a "Task" / "Project"
-        if(req.params.task_id || req.params.project_id){
-            const model_id = req.params.task_id || req.params.project_id;
-            numOfDocs = await TicketService.countDocsNumOfTask(req.params.task_id ? type.task : type.project, model_id);
-            ticketPaginate = await TicketService.paginateTaskTickets(req.params.task_id ? type.task : type.project, model_id, limit, startIndex);
+        
+        //* 1. Get the results based on the roles
+        switch(req.user.role){
+            case roles.manager: {
+                numOfDocs = await TicketService.countTicketNum();
+                ticketPaginate = await TicketService.paginateAllTickets(limit, startIndex);
+                break;
+            }
+            case roles.engineer: {
+                numOfDocs = await TicketService.countEngTicketNum(req.user._id);
+                ticketPaginate = await TicketService.paginateEngTickets(req.user._id, limit, startIndex);
+                break;
+            }
+            case roles.client: {
+                numOfDocs = await TicketService.countClientTicketNum(req.user._id);
+                ticketPaginate = await TicketService.paginateClientTickets(req.user._id, limit, startIndex);
+                break;
+            }
+            default: throw new Error("Invalid user or roles");
         }
-        //? For a specific user "Engineer" / "Manager"
-        else{
-            //* Check the user roles from the `jwtToken`
-            const user_role = req.role;
-            //* Check whether a user_ id is provided
-            const user_id = req.params.user_id;
-            numOfDocs = await TicketService.countDocsNum(user_id, user_role);
-            ticketPaginate = await TicketService.paginateTickets(user_id, user_role, limit, startIndex);
+
+        //* 2. Decorate the result with different information based on the roles
+        for(let i = 0; i < ticketPaginate.length; i++){
+            ticketPaginate[i] = await ticketDecorator(req.user.role, ticketPaginate[i]);
         }
 
-        req.paginated = {
+        res.status(200).json({
             numOfDocs: numOfDocs,
             docs: ticketPaginate,
             nextPage: endIndex < numOfDocs ? page + 1 : undefined,
             previousPage: startIndex > 0 ? page - 1 : undefined,
             limit: limit
+        })
+
+    }catch(error){
+        console.error(error);
+        res.status(500).json({});
+
+        return next(new Error());
+    }
+}
+
+// ADD DECORATORS
+exports.paginateTaskTicket = async(req, res, next) => {
+    try{
+        //* Pagination
+        const { page, limit, startIndex, endIndex } = paginationDetails(req);
+        const task_id = req.params.task_id;
+
+        const numOfDocs = await TicketService.countTaskTicket(task_id);
+        let ticketPaginate = await TicketService.paginateTaskTickets(task_id, limit, startIndex);
+
+        for(let i = 0; i <ticketPaginate.length; i++){
+            ticketPaginate[i] = await ticketDecorator(req.user.role, ticketPaginate[i]);
         }
 
-        next();
+        res.status(200).json({
+            numOfDocs: numOfDocs,
+            docs: ticketPaginate,
+            nextPage: endIndex < numOfDocs ? page + 1 : undefined,
+            previousPage: startIndex > 0 ? page - 1 : undefined,
+            limit: limit
+        })
+    }catch(error){
 
+        res.status(500).json({});
+
+        return next(new Error());
+    }
+}
+
+// ADD DECORATORS
+exports.paginateProjectTicket = async(req, res, next) => {
+    try{
+        //* Pagination
+        const { page, limit, startIndex, endIndex } = paginationDetails(req);
+        const project_id = req.params.project_id;
+
+        const numOfDocs = await TicketService.countProjectTicket(project_id);
+        const ticketPaginate = await TicketService.paginateProjectTickets(project_id, limit, startIndex);
+
+        for(let i = 0; i < ticketPaginate.length; i++){
+            ticketPaginate[i] = await ticketDecorator(req.user.role, ticketPaginate[i]);
+        }
+
+        res.status(200).json({
+            numOfDocs: numOfDocs,
+            docs: ticketPaginate,
+            nextPage: endIndex < numOfDocs ? page + 1 : undefined,
+            previousPage: startIndex > 0 ? page - 1 : undefined,
+            limit: limit
+        })
     }catch(error){
 
         res.status(500).json({});
@@ -161,7 +227,7 @@ exports.updateTicketStatus = async(req, res, next) => {
 
         const ticket_id = req.params.id;
 
-        const status = req.body['status'];
+        const { status } = req.body;
 
         const result = await TicketService.updateTicketStatus(ticket_id, status);
 
@@ -186,14 +252,14 @@ exports.updateTicketStatus = async(req, res, next) => {
     }
 }
 
-exports.updateTicketDueAndEng = async(req, res, next) => {
+exports.updateTicketDueDate = async(req, res, next) => {
     try {
 
         const ticket_id = req.params.id;
 
-        const ticket = req.body;
+        const { due_date } = req.body;
 
-        const result = await TicketService.updateTicketDueAndEng(ticket_id, ticket);
+        const result = await TicketService.updateTicketDueDate(ticket_id, due_date);
 
         //? Push Notification when due date of a ticket is set
         if(result.due_date) await NotificationController.createNotification(result, type.ticket, notification_type.ticket_due_date);
@@ -216,26 +282,13 @@ exports.deleteTicketAttachment = async(req, res, next) => {
 
         const attachments = req.body;
 
-        // 1. Delete all the chosen files of a ticket
-        await FileController.deleteFiles(attachments);
+        const ticket = await deleteAttachments(ticket_id, attachments);
 
-        // 2. Generate another array which stores a list of "cloudinary_id" for chosen files
-        const cloudinaryList = attachments.map((attachment) => attachment.cloudinary_id);
-
-        // 3. Delete the "AttachmentSchema" object stored within the ticket
-        const ticket = await TicketService.deleteTicketAttachment(ticket_id, cloudinaryList);
-
-
-        res.status(200).json({
-            status: true,
-            ticket: ticket
-        });
+        res.status(200).json(ticket.attachments);
 
     } catch (error) {
 
-        res.status(500).json({
-            status: false,
-        })
+        res.status(500).json(undefined);
 
         return next(error);
     }
@@ -247,10 +300,19 @@ exports.deleteTicket = async(req, res, next) => {
 
         const ticket_id = req.params.ticketId;
 
-        //* The folder to be deleted MUST BE "EMPTY"
+        const ticket = await TicketService.getTicketById(ticket_id);
+
+        //* 1. Delete all the files of the ticket stored in `cloudinary`
+        await deleteAttachments(ticket_id, ticket.attachments);
+
+        //* 2. The folder to be deleted MUST BE "EMPTY"
         await FileController.deleteFolder(type.ticket, ticket_id);
-        //* Delete all its relevant chat
+        
+        //* 3. Delete all its relevant chat
         await ChatController.deleteTicketChat(ticket_id);
+
+        //* 4. Delete all its relevant notification
+        await NotificationController.deleteNotificationByModelId(ticket_id);
 
         const deletedTask = await TicketService.deleteTicket(ticket_id);
 
@@ -380,6 +442,10 @@ exports.deleteTicketByProject = async(req, res, next) => {
 
                 // 5. Delete all its relevant chat
                 await ChatController.deleteTicketChat(ticket._id);
+
+                // 6. Delete all its relevant notification
+                await NotificationController.deleteNotificationByModelId(ticket._id);
+
             }
 
             // 6. Finally, delete the ALL "Task" docs related to the project
@@ -407,9 +473,6 @@ exports.deleteTicketByTask = async(req, res, next) => {
         const ticketList = await TicketService.getTaskTicket(task_id);
 
         if(ticketList.length > 0){
-
-            //? After deleting all the associated tickets, we need to check the project progress && update its status
-            const project_id = ticketList[0].project_id;
         
             // 3. For each "Ticket" doc, delete its files in `Cloudinary` (Reason: Folder can be deleted ONLY if it's empty)
             for(const ticket of ticketList) 
@@ -421,21 +484,15 @@ exports.deleteTicketByTask = async(req, res, next) => {
 
                 // 5. Delete all its relevant chat
                 await ChatController.deleteTicketChat(ticket._id);
+
+                await NotificationController.deleteNotificationByModelId(ticket._id);
             }
 
             // 6. Finally, delete the ALL "Task" docs related to the project
             const result = await TicketService.deleteTaskTicket(task_id);
-
-            // Pass to the next middleware, "checkProjectProgress" to update project's status (if necessary)
-            req.result = true;
-            req.task_id = task_id;
-            req.project_id = project_id;
-
-            // Call to next middleware
-            next();
         }
-        else{ res.status(200).json(true); }
 
+        res.status(200).json(true);
 
     } catch (error) {
 
@@ -463,6 +520,23 @@ exports.getProjectProgress = async(req, res, next) => {
     }
 }
 
+const paginationDetails = (req) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1)* limit;
+    const endIndex = page * limit;
+    return{ page, limit, startIndex, endIndex };
+}
+
+// ADD THIS FUNCTION
+const ticketDecorator = async(user_role, ticket) => {
+    let decorated = ticket.toJSON();
+    decorated = await Decorator.projectName(decorated);
+    decorated = await Decorator.taskAndLeader(decorated);
+    decorated = !(user_role == roles.client) ? await Decorator.clientDetails(decorated) : decorated;
+    return decorated;
+}
+
 //* Called only when a file is uploaded
 const uploadFiles = async(files, ticket_id) => {
     if(files && files.length > 0){
@@ -472,4 +546,17 @@ const uploadFiles = async(files, ticket_id) => {
         return await TicketService.updateTicketAttachment(ticket_id, uploadFiles);
     }
     return undefined;
+}
+
+//* Called to delete attachments
+const deleteAttachments = async(ticket_id, attachments) => {
+    // 1. Delete all the chosen files of a ticket
+    await FileController.deleteFiles(attachments);
+
+    // 2. Generate another array which stores a list of "cloudinary_id" for chosen files
+    const cloudinaryList = attachments.map((attachment) => attachment.cloudinary_id);
+
+    // 3. Delete the "AttachmentSchema" object stored within the ticket
+    const ticket = await TicketService.deleteTicketAttachment(ticket_id, cloudinaryList);
+    return ticket;
 }
