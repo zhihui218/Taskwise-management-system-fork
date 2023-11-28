@@ -1,0 +1,24 @@
+name: Auto Create Pull Request
+
+on:
+  push:
+    branches:
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+
+jobs:
+  create_pull_request:
+    runs-on: [windows-latest, macOS-latest]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create Pull Request
+      uses: repo-sync/pull-request@v4
+      with:
+        destination_branch: "main" 
+        github_token: ${{ secrets.GITHUB_TOKEN }}
