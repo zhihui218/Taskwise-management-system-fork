@@ -1,27 +1,24 @@
 name: Auto Create Pull Request
 
 on:
-  push:
-    branches: 
-      - zhihui218-adaptive
-      - houren-reformative
-      - Wrong-Output
-      - Redundancy-Of-Frontend-And-Backend-Code
-      - Real-Time-Notifications
-      - validation-error
+  workflow_run:
+    workflows: ["API Continuous Integration", "Web Continuous Integration"]
+    types:
+      - completed
 
 permissions:
   contents: read
   pull-requests: write
-  
+
 jobs:
   create_pull_request:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Create Pull Request
-      run: gh pr create -B main -H ${{ github.head_ref || github.ref_name }}  --title "Merge branch '${{ github.head_ref || github.ref_name }}' into main" --body 'Created by GitHub action'
+      run: gh pr create -B main -H ${{ github.head_ref || github.ref_name }}  --title "Merge branch '${{ github.head_ref || github.ref_name }}' into main" --body 'Automatically created by GitHub action'
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
