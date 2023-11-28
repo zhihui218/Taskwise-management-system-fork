@@ -28,7 +28,7 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '18'
+        node-version: '18' 
 
     - name: Install Web dependencies
       run: npm install --legacy-peer-deps
@@ -42,7 +42,9 @@ jobs:
       run: npm run build
       working-directory: taskwise_web
 
-    # Uncomment the following if you have tests configured
-    # - name: Run Web tests
-    #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-    #   working-directory: taskwise_web
+    - name: Run Web tests
+      run: |
+        npx ng test --watch=false --browsers=ChromeHeadlessCI --no-progress --code-coverage
+      working-directory: taskwise_web
+      env:
+        CHROME_BIN: /usr/bin/google-chrome
