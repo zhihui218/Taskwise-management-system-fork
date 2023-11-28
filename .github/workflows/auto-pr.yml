@@ -1,0 +1,27 @@
+name: Auto Create Pull Request
+
+on:
+  push:
+    branches: 
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+
+permissions:
+  contents: read
+  pull-requests: write
+  
+jobs:
+  create_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create Pull Request
+      run: gh pr create -B main -H ${{ github.head_ref || github.ref_name }}  --title "Merge branch '${{ github.head_ref || github.ref_name }}' into main" --body 'Created by GitHub action'
+      env:
+          GH_TOKEN: ${{ github.token }}
