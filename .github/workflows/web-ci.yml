@@ -1,0 +1,48 @@
+name: Web Continuous Integration
+
+on:
+  push:
+    branches:
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+  pull_request:
+    branches:
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+
+jobs:
+  build-and-test-web:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+
+    - name: Install Web dependencies
+      run: npm install
+      working-directory: taskwise_web
+
+    - name: Lint Web project
+      run: npm run lint
+      working-directory: taskwise_web
+
+    - name: Build Web project
+      run: npm run build
+      working-directory: taskwise_web
+
+    # Uncomment the following if you have tests configured
+    # - name: Run Web tests
+    #   run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+    #   working-directory: taskwise_web
