@@ -12,13 +12,12 @@ on:
 
 jobs:
   create_pull_request:
-    runs-on: windows-latest
+    runs-on: [windows-latest, macOS-latest]
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Create Pull Request
-      uses: pull-request@v2
-      with:
-        destination_branch: "main" 
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      run: gh pr create -B main -H ${{ github.head_ref || github.ref_name }}  --title "Merge ${{ github.head_ref || github.ref_name }} into main" --body 'Created by GitHub action'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
