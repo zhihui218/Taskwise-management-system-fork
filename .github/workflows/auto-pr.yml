@@ -15,8 +15,12 @@ jobs:
     runs-on: [windows-latest, macOS-latest]
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
+    - name: Create Pull Request
+      run: gh pr create -B main -H ${{ github.head_ref || github.ref_name }}  --title "Merge ${{ github.head_ref || github.ref_name }} into main" --body 'Created by GitHub action'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create Pull Request
       uses: repo-sync/pull-request@v2
       with:
