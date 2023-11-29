@@ -1,10 +1,14 @@
 name: Auto Create Pull Request
 
 on:
-  workflow_run:
-    workflows: ["Combined Continuous Integration"]
-    types:
-      - completed
+  push:
+    branches: 
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
 
 permissions:
   contents: read
