@@ -1,22 +1,10 @@
 name: Web Continuous Integration
 
 on:
-  push:
-    branches:
-      - zhihui218-adaptive
-      - houren-reformative
-      - Wrong-Output
-      - Redundancy-Of-Frontend-And-Backend-Code
-      - Real-Time-Notifications
-      - validation-error
-  pull_request:
-    branches:
-      - zhihui218-adaptive
-      - houren-reformative
-      - Wrong-Output
-      - Redundancy-Of-Frontend-And-Backend-Code
-      - Real-Time-Notifications
-      - validation-error
+  workflow_run:
+    workflows: ["API Continuous Integration"]
+    types:
+      - completed
 
 jobs:
   build-and-test-web:
