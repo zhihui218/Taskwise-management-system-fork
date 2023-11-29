@@ -4,12 +4,7 @@ on:
   push:
     branches: 
       - zhihui218-adaptive
-      - houren-reformative
-      - Wrong-Output
-      - Redundancy-Of-Frontend-And-Backend-Code
-      - Real-Time-Notifications
-      - validation-error
-
+      
 permissions:
   contents: read
   pull-requests: write
