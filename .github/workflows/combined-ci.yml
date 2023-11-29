@@ -9,9 +9,6 @@ on:
       - Redundancy-Of-Frontend-And-Backend-Code
       - Real-Time-Notifications
       - validation-error
-    paths:
-      - 'taskwise_api/**'
-      - 'taskwise_web/**'
   pull_request:
     branches:
       - zhihui218-adaptive
@@ -20,10 +17,7 @@ on:
       - Redundancy-Of-Frontend-And-Backend-Code
       - Real-Time-Notifications
       - validation-error
-    paths:
-      - 'taskwise_api/**'
-      - 'taskwise_web/**'
-
+      
 jobs:
   build-and-test-api:
     runs-on: ubuntu-latest
