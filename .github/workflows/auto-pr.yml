@@ -2,7 +2,7 @@ name: Auto Create Pull Request
 
 on:
   workflow_run:
-    workflows: ["Web Continuous Integration"]
+    workflows: ["Combined Continuous Integration"]
     types:
       - completed
 
