@@ -1,0 +1,64 @@
+name: Combined Continuous Integration
+
+on:
+  push:
+    branches: 
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+    paths:
+      - 'taskwise_api/**'
+      - 'taskwise_web/**'
+  pull_request:
+    branches:
+      - zhihui218-adaptive
+      - houren-reformative
+      - Wrong-Output
+      - Redundancy-Of-Frontend-And-Backend-Code
+      - Real-Time-Notifications
+      - validation-error
+    paths:
+      - 'taskwise_api/**'
+      - 'taskwise_web/**'
+
+jobs:
+  build-and-test-api:
+    runs-on: ubuntu-latest
+    if: contains(github.event.commits[0].message, 'taskwise_api') || contains(github.event.pull_request.title, 'taskwise_api')
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+    - name: Install API dependencies
+      run: npm install --legacy-peer-deps
+      working-directory: taskwise_api
+
+  build-and-test-web:
+    runs-on: ubuntu-latest
+    if: contains(github.event.commits[0].message, 'taskwise_web') || contains(github.event.pull_request.title, 'taskwise_web')
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18' 
+    - name: Install Web dependencies
+      run: npm install --legacy-peer-deps
+      working-directory: taskwise_web
+    - name: Lint Web project
+      run: npm run lint
+      working-directory: taskwise_web
+    - name: Build Web project
+      run: npm run build
+      working-directory: taskwise_web
+    - name: Run Web tests
+      run: |
+        npx ng test --watch=false --browsers=ChromeHeadlessCI --no-progress --code-coverage
+      working-directory: taskwise_web
+      env:
+        CHROME_BIN: /usr/bin/google-chrome
